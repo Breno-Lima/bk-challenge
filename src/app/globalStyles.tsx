@@ -8,5 +8,6 @@ export const GlobalStyle = createGlobalStyle`
     box-sizing: border-box;
     background-color: #000000; 
     font-family: Arial, sans-serif;
+    width: 100%;
   }
 `;

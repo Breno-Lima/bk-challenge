@@ -41,8 +41,7 @@ export const InputWithIcon = styled.div`
     }
 
     &::placeholder {
-      color: #FAFAFA;
-      opacity: 0.7;
+      color: #71717A;
     }
   }
 
@@ -81,7 +80,7 @@ export const DropdownHeader = styled.div`
   border: 1px dashed #3F3F46;
   border-radius: 48px;
   background-color: #000;
-  color: #FAFAFA;
+  color: #71717A;
   font-size: 0.875rem;
   cursor: pointer;
   display: flex;
@@ -135,7 +134,7 @@ export const SearchMedia = styled.input`
   border-radius: 48px;
   width: 23rem;
   background-color: transparent;
-  color: #FAFAFA;
+  color: #71717A;
 
   &:focus {
     outline: none;
@@ -143,8 +142,7 @@ export const SearchMedia = styled.input`
   }
 
   &::placeholder {
-    color: #FAFAFA;
-    opacity: 0.7; 
+    color: #71717A;
   }
 
   @media (max-width: 480px) {
@@ -156,17 +154,19 @@ export const ButtonUploadMedia = styled.button`
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.5rem 1rem;
+  padding: 0rem 1rem;
+  height: 2rem;
   background-color: #10B981;
   color: #022C22;
   font-weight: 500;
   border: none;
-  border-radius: 12px;
+  border-radius: 2rem;
   cursor: pointer;
 
   &:hover {
     background-color: #177b5a;
-  }
+    transition: background-color 0.5s;
+}
 
   img {
     width: 1rem;
