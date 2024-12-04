@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import styled from 'styled-components';
 
 export const Container = styled.div`
@@ -126,17 +126,17 @@ export const Spacer = styled.div`
   }
 `;
 
-
 export const Row = styled.div`
   display: grid;
   grid-template-columns: auto 1fr auto auto;
   align-items: center;
   width: 85%;
   padding: 10px 0;
+  gap: 2rem; 
 
   @media (max-width: 768px) {
     grid-template-columns: auto 1fr;
-    grid-template-rows: auto auto;
+    grid-template-rows: auto auto auto;
     align-items: flex-start;
     width: 100%;
     padding: 8px 0;
@@ -162,6 +162,7 @@ export const SpacedCategory = styled(Category)`
   font-weight: bold;
   grid-column: 4;
   justify-self: start; 
+  margin-right: 2rem;
 
   @media (max-width: 768px) {
     margin: 8px 0;
@@ -177,5 +178,47 @@ export const StyledDate = styled(Date)`
   @media (max-width: 768px) {
     grid-column: 2;
     margin-left: 0.5rem;
+  }
+`;
+
+
+export const HeaderRow = styled.div`
+  display: grid;
+  grid-template-columns: auto 1fr auto auto;
+  align-items: center;
+  width: 85%;
+  padding: 10px 0;
+  font-weight: bold;
+  color: #D4D4D8;
+  gap: 3rem; 
+
+  @media (max-width: 768px) {
+    grid-template-columns: auto 1fr;
+    grid-template-rows: auto auto auto auto;
+    align-items: flex-start;
+    width: 100%;
+    padding: 8px 0;
+  }
+`;
+
+export const HeaderColumn = styled.div`
+  text-align: center;
+  &:first-child {
+    text-align: left;
+  }
+
+
+  &:nth-child(2) {
+    text-align: left;
+  }
+  &:nth-child(4) {
+    margin-right: 4rem;
+    padding-left: 1rem;
+  }
+  @media (max-width: 768px) {
+    &:nth-child(3),
+    &:nth-child(4) {
+      grid-column: 2;
+    }
   }
 `;

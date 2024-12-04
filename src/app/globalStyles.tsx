@@ -1,5 +1,6 @@
 "use client"
 import { createGlobalStyle } from 'styled-components';
+import styled from 'styled-components';
 
 export const GlobalStyle = createGlobalStyle`
   body {
@@ -11,3 +12,4 @@ export const GlobalStyle = createGlobalStyle`
     width: 100%;
   }
 `;
+
