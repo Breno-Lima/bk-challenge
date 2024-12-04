@@ -12,8 +12,23 @@ export const Container = styled.div`
 
   @media (max-width: 768px) {
     margin-top: 2rem;
+    width: 100%;
+    overflow-x: auto;
   }
 `;
+
+export const TableWrapper = styled.div`
+  width: 86%;
+  margin: 0 auto; 
+  overflow-x: auto; 
+  
+  @media (max-width: 768px) {
+    width: 100%;
+    padding: 0; 
+    box-sizing: border-box; 
+  }
+`;
+
 
 export const Divider = styled.div`
   width: 86%;
@@ -28,7 +43,15 @@ export const Divider = styled.div`
 export const DividerInside = styled(Divider)`
   background-color: #27272A;
   margin: 5px 0;
+  width: 100%;
+  max-width: 100%;
+
+  @media (max-width: 768px) {
+    width: 100%;
+    margin-left: 0;
+  }
 `;
+
 
 export const CheckBox = styled.input.attrs({ type: 'checkbox' })`
   margin-right: 10px;
@@ -118,14 +141,6 @@ export const Category = styled.p<{ color: string }>`
   }
 `;
 
-export const Spacer = styled.div`
-  flex-grow: 1; 
-
-  @media (max-width: 768px) {
-    display: none;
-  }
-`;
-
 export const Row = styled.div`
   display: grid;
   grid-template-columns: auto 1fr auto auto;
@@ -135,11 +150,11 @@ export const Row = styled.div`
   gap: 2rem; 
 
   @media (max-width: 768px) {
-    grid-template-columns: auto 1fr;
-    grid-template-rows: auto auto auto;
-    align-items: flex-start;
+    grid-template-columns: auto 1fr auto auto;
+    align-items: center;
     width: 100%;
     padding: 8px 0;
+    min-width: 600px; 
   }
 `;
 
@@ -152,7 +167,6 @@ export const Column = styled.div`
   @media (max-width: 768px) {
     align-items: flex-start;
     width: 100%;
-    margin-top: 8px;
   }
 `;
 
@@ -165,9 +179,9 @@ export const SpacedCategory = styled(Category)`
   margin-right: 2rem;
 
   @media (max-width: 768px) {
-    margin: 8px 0;
+    margin: 0;
     font-weight: normal;
-    grid-column: 2;
+    grid-column: 4;
   }
 `;
 
@@ -176,11 +190,9 @@ export const StyledDate = styled(Date)`
   justify-self: start; 
 
   @media (max-width: 768px) {
-    grid-column: 2;
-    margin-left: 0.5rem;
+    grid-column: 3;
   }
 `;
-
 
 export const HeaderRow = styled.div`
   display: grid;
@@ -193,20 +205,18 @@ export const HeaderRow = styled.div`
   gap: 3rem; 
 
   @media (max-width: 768px) {
-    grid-template-columns: auto 1fr;
-    grid-template-rows: auto auto auto auto;
-    align-items: flex-start;
+    grid-template-columns: auto 1fr auto auto;
+    align-items: center;
     width: 100%;
+    min-width: 600px; 
     padding: 8px 0;
   }
 `;
 
 export const HeaderColumn = styled.div`
-  text-align: center;
   &:first-child {
     text-align: left;
   }
-
 
   &:nth-child(2) {
     text-align: left;
@@ -216,9 +226,8 @@ export const HeaderColumn = styled.div`
     padding-left: 1rem;
   }
   @media (max-width: 768px) {
-    &:nth-child(3),
-    &:nth-child(4) {
-      grid-column: 2;
-    }
+    width: 100%;
+    display: flex;
+    align-items: center;
   }
 `;
