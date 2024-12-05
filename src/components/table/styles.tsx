@@ -225,3 +225,100 @@ export const HeaderColumn = styled.div`
     align-items: center;
   }
 `;
+
+export const ContainerPage = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 86%;
+  margin-top: 1rem;
+  color: #D4D4D8;
+
+  @media (max-width: 768px) {
+    width: 100%;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+`;
+
+export const InfoPage = styled.div`
+  font-size: 14px;
+  margin-right: 1rem;
+
+  @media (max-width: 768px) {
+    margin-bottom: 0.5rem;
+  }
+`;
+
+export const RowsPageContainer = styled.div`
+  display: flex;
+  align-items: center;
+  margin-right: 1rem;
+
+  @media (max-width: 768px) {
+    margin-bottom: 0.5rem;
+  }
+`;
+
+export const RowsPage = styled.span`
+  font-size: 14px;
+  margin-right: 0.5rem;
+`;
+
+export const DropdownSelect = styled.select`
+  background-color: #27272A;
+  color: #D4D4D8;
+  border: 1px solid #71717A;
+  border-radius: 4px;
+  padding: 0.25rem 0.5rem;
+  font-size: 14px;
+  cursor: pointer;
+
+  &:focus {
+    outline: none;
+    border-color: #10B981;
+  }
+`;
+export const RightContainer = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 1rem; 
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem; 
+  }
+`;
+export const PaginationContainer = styled.div`
+  display: flex;
+  align-items: center;
+`;
+
+export const PaginationButton = styled.button`
+  background-color: transparent;
+  border: 1px solid #71717A;
+  color: #D4D4D8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.25rem 0.5rem;
+  margin: 0 0.25rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+
+  &:hover:not(:disabled) {
+    background-color: rgba(255,255,255,0.1);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+`;
+
+export const Pages = styled.span`
+  font-size: 14px;
+  margin: 0 0.5rem;
+`;
