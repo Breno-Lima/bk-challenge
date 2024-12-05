@@ -1,27 +1,21 @@
 "use client";
 import styled from 'styled-components';
 
-export const Container = styled.div`
+export const ContainerHeader = styled.div`
   display: flex;
-  flex-direction: column;
-  align-items: center; 
-  justify-content: center; 
-  text-align: center;
+  margin-left: 3.75rem;
+  justify-content: space-between;
   width: 100%;
-  margin-top: 3.8rem;
+`;
 
-  @media (max-width: 768px) {
-    margin-top: 2rem;
-    width: 100%;
-    overflow-x: auto;
-  }
+export const ContainerDateCategory = styled.div`
+  display: flex;
 `;
 
 export const TableWrapper = styled.div`
   width: 86%;
   margin: 0 auto; 
   overflow-x: auto; 
-  
   @media (max-width: 768px) {
     width: 100%;
     padding: 0; 
@@ -29,12 +23,10 @@ export const TableWrapper = styled.div`
   }
 `;
 
-
 export const Divider = styled.div`
   width: 86%;
   height: 2px;
   background-color: #27272A;
-
   @media (max-width: 768px) {
     width: 100%;
   }
@@ -49,7 +41,6 @@ export const DividerInside = styled(Divider)`
   }
 `;
 
-
 export const CheckBox = styled.input.attrs({ type: 'checkbox' })`
   background-color: transparent;
   border: 1px solid #71717A; 
@@ -58,12 +49,10 @@ export const CheckBox = styled.input.attrs({ type: 'checkbox' })`
   height: 16px; 
   appearance: none; 
   cursor: pointer; 
-
   &:checked {
     background-color: #022C22; 
     border-color: #10B981; 
   }
-
   @media (max-width: 768px) {
     margin-right: 8px;
     margin-top: auto;
@@ -78,7 +67,6 @@ export const Title = styled.h2`
   margin: 0px 0;
   color: #D4D4D8;
   text-align: center;
-
   @media (max-width: 768px) {
     font-size: 16px;
     margin-left: 0.5rem;
@@ -91,7 +79,6 @@ export const Id = styled.p`
   margin: 5px 0;
   text-align: center;
   line-height: 1;
-
   @media (max-width: 768px) {
     font-size: 12px;
     margin-left: 0.5rem;
@@ -103,7 +90,6 @@ export const Date = styled.p`
   color: #71717A;
   margin: 5px 0;
   text-align: center;
-
   @media (max-width: 768px) {
     font-size: 12px;
   }
@@ -116,8 +102,6 @@ export const Category = styled.p<{ color: string }>`
   text-align: center;
   display: flex;
   align-items: center;
-  padding-right: 0.5rem;
-
   &::before {
     content: '•';
     color: ${({ color }) => color};
@@ -126,30 +110,11 @@ export const Category = styled.p<{ color: string }>`
     margin-right: 0.1em;
     font-size: 1.5em;
   }
-
   @media (max-width: 768px) {
     font-size: 12px;
-
     &::before {
       font-size: 1.2em;
     }
-  }
-`;
-
-export const Row = styled.div`
-  display: grid;
-  grid-template-columns: auto 1fr auto auto;
-  align-items: center;
-  width: 85%;
-  padding: 0.75rem 0;
-  gap: 1.5rem; 
-
-  @media (max-width: 768px) {
-    grid-template-columns: auto 1fr auto auto;
-    align-items: center;
-    width: 100%;
-    padding: 8px 0;
-    min-width: 600px; 
   }
 `;
 
@@ -158,71 +123,9 @@ export const Column = styled.div`
   flex-direction: column;
   align-items: flex-start;
   grid-column: 2;
-
   @media (max-width: 768px) {
     align-items: flex-start;
     width: 100%;
-  }
-`;
-
-export const SpacedCategory = styled(Category)`
-  margin-left: 4rem;
-  margin-right: 6rem;
-  font-weight: bold;
-  grid-column: 4;
-  justify-self: start; 
-  margin-right: 2rem;
-
-  @media (max-width: 768px) {
-    margin: 0;
-    font-weight: normal;
-    grid-column: 4;
-  }
-`;
-
-export const StyledDate = styled(Date)`
-  grid-column: 3;
-  justify-self: start; 
-  @media (max-width: 768px) {
-    grid-column: 3;
-  }
-`;
-
-export const HeaderRow = styled.div`
-  display: grid;
-  grid-template-columns: auto 1fr auto auto;
-  align-items: center;
-  width: 85%;
-  padding: 10px 0;
-  font-weight: bold;
-  color: #D4D4D8;
-  gap: 3rem; 
-
-  @media (max-width: 768px) {
-    grid-template-columns: auto 1fr auto auto;
-    align-items: center;
-    width: 100%;
-    min-width: 600px; 
-    padding: 8px 0;
-  }
-`;
-
-export const HeaderColumn = styled.div`
-  &:first-child {
-    text-align: left;
-  }
-
-  &:nth-child(2) {
-    text-align: left;
-  }
-  &:nth-child(4) {
-    margin-right: 4rem;
-    padding-left: 1rem;
-  }
-  @media (max-width: 768px) {
-    width: 100%;
-    display: flex;
-    align-items: center;
   }
 `;
 
@@ -233,7 +136,6 @@ export const ContainerPage = styled.div`
   width: 86%;
   margin-top: 1rem;
   color: #D4D4D8;
-
   @media (max-width: 768px) {
     width: 100%;
     flex-direction: column;
@@ -245,7 +147,6 @@ export const InfoPage = styled.div`
   font-size: 14px;
   margin-right: 1rem;
   color: #71717A;
-
   @media (max-width: 768px) {
     margin-bottom: 0.5rem;
   }
@@ -282,12 +183,10 @@ export const DropdownSelect = styled.select`
   background-position: right 0.8rem center;
   background-size: 0.5rem; 
   background-color: transparent; 
-
   &:focus {
     outline: none;
     border-color: none;
   }
-
   &:focus-visible {
     background-color: #000;
     color: #FAFAFA;
@@ -295,24 +194,24 @@ export const DropdownSelect = styled.select`
     display: flex;
     align-items: center;
     gap: 1rem;
-
     @media (max-width: 480px) {
       width: 100%;
       justify-content: space-between;
     }
   }
 `;
+
 export const RightContainer = styled.div`
   display: flex;
   align-items: center;
   gap: 1rem; 
-
   @media (max-width: 768px) {
     flex-direction: column;
     align-items: flex-start;
     gap: 0.5rem; 
   }
 `;
+
 export const PaginationContainer = styled.div`
   display: flex;
   align-items: center;
@@ -331,19 +230,112 @@ export const PaginationButton = styled.button`
   border-radius: 8px;
   cursor: pointer;
   transition: background-color 0.3s ease;
-
   &:hover:not(:disabled) {
     background-color: rgba(255,255,255,0.1);
   }
-
   &:disabled {
     opacity: 0.5;
     cursor: not-allowed;
   }
 `;
 
+export const StyledDate = styled(Date)`
+  grid-column: 3;
+  justify-self: end;
+  margin-right: 2rem;
+  @media (max-width: 768px) {
+    grid-column: 3;
+  }
+`;
+
+export const SpacedCategory = styled(Category)`
+  grid-column: 4;
+  justify-self: end;
+  font-weight: bold;
+  @media (max-width: 768px) {
+    margin: 0;
+    font-weight: normal;
+    grid-column: 4;
+  }
+`;
+
+export const ContainerTest = styled.div`
+  display: flex;
+  gap: 2rem;
+  justify-self: end;
+`;
+
 export const Pages = styled.span`
   font-size: 14px;
   margin: 0 0.5rem;
   color: #71717A;
+`;
+
+export const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center; 
+  justify-content: center; 
+  text-align: center;
+  width: 100%;
+  margin-top: 3.8rem;
+  @media (max-width: 768px) {
+    margin-top: 2rem;
+    width: 100%;
+    overflow-x: auto;
+  }
+`;
+
+export const HeaderRow = styled.div`
+  display: grid;
+  grid-template-columns: 2rem 4fr 1fr 1fr;
+  align-items: center;
+  width: 89%;
+  padding: 10px 0;
+  font-weight: bold;
+  color: #D4D4D8;
+  @media (max-width: 768px) {
+    width: 100%;
+    min-width: 600px; 
+    padding: 8px 0;
+  }
+`;
+
+export const Row = styled.div`
+  display: grid;
+  grid-template-columns: 2rem 4fr 1fr 1fr;
+  align-items: center;
+  place-content: end;
+  width: 90%;  
+  padding: 0.75rem 0;
+  @media (max-width: 768px) {
+    width: 100%;
+    padding: 8px 0;
+    min-width: 600px; 
+  }
+`;
+
+export const HeaderColumn = styled.div`
+  text-align: left;
+  &:nth-child(3) {
+    text-align: right;
+  }
+  &:nth-child(4) {
+    text-align: right;
+  }
+  @media (max-width: 768px) {
+    width: 100%;
+    display: flex;
+    align-items: center;
+  }
+`;
+
+export const HeaderColumn2 = styled.div`
+  justify-self: end;
+  justify-content: start;
+  @media (max-width: 768px) {
+    width: 100%;
+    display: flex;
+    align-items: center;
+  }
 `;
