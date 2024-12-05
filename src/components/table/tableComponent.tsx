@@ -1,29 +1,29 @@
 "use client"
 import React, { useState } from 'react';
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react';
-import { 
-  ContainerPage, 
-  InfoPage, 
-  RowsPageContainer, 
-  RowsPage, 
-  DropdownSelect, 
-  PaginationContainer, 
-  PaginationButton, 
-  Pages, 
-  CheckBox, 
-  HeaderColumn, 
-  HeaderRow, 
-  StyledDate, 
-  SpacedCategory, 
-  Row, 
-  Column, 
-  Id, 
-  Title, 
-  DividerInside, 
-  Divider, 
-  TableWrapper, 
-  Container,
-  RightContainer 
+import {
+    ContainerPage,
+    InfoPage,
+    RowsPageContainer,
+    RowsPage,
+    DropdownSelect,
+    PaginationContainer,
+    PaginationButton,
+    Pages,
+    CheckBox,
+    HeaderColumn,
+    HeaderRow,
+    StyledDate,
+    SpacedCategory,
+    Row,
+    Column,
+    Id,
+    Title,
+    DividerInside,
+    Divider,
+    TableWrapper,
+    Container,
+    RightContainer
 } from './styles';
 
 export default function TableComponent() {
@@ -32,9 +32,8 @@ export default function TableComponent() {
     const totalPages = 11;
     const totalItems = 228;
 
-    interface HandleRowsPerPageChangeEvent extends React.ChangeEvent<HTMLSelectElement> {}
 
-    const handleRowsPerPageChange = (e: HandleRowsPerPageChangeEvent) => {
+    const handleRowsPerPageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         setRowsPerPage(Number(e.target.value));
         setCurrentPage(1);
     };
@@ -72,7 +71,7 @@ export default function TableComponent() {
 
             <ContainerPage>
                 <InfoPage>Showing {Math.min(rowsPerPage, totalItems)} of {totalItems} medias</InfoPage>
-                
+
                 <RightContainer>
                     <RowsPageContainer>
                         <RowsPage>Rows per Page</RowsPage>
@@ -88,6 +87,7 @@ export default function TableComponent() {
                     </RowsPageContainer>
 
                     <PaginationContainer>
+                        <Pages>Page {currentPage} of {totalPages}</Pages>
                         <PaginationButton
                             onClick={handleFirstPage}
                             disabled={currentPage === 1}
@@ -101,7 +101,6 @@ export default function TableComponent() {
                             <ChevronLeft size={16} />
                         </PaginationButton>
 
-                        <Pages>Page {currentPage} of {totalPages}</Pages>
 
                         <PaginationButton
                             onClick={handleNextPage}

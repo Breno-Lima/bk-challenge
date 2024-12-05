@@ -244,6 +244,7 @@ export const ContainerPage = styled.div`
 export const InfoPage = styled.div`
   font-size: 14px;
   margin-right: 1rem;
+  color: #71717A;
 
   @media (max-width: 768px) {
     margin-bottom: 0.5rem;
@@ -254,7 +255,7 @@ export const RowsPageContainer = styled.div`
   display: flex;
   align-items: center;
   margin-right: 1rem;
-
+  color: #71717A;
   @media (max-width: 768px) {
     margin-bottom: 0.5rem;
   }
@@ -266,17 +267,39 @@ export const RowsPage = styled.span`
 `;
 
 export const DropdownSelect = styled.select`
-  background-color: #27272A;
+  background-color: transparent; 
   color: #D4D4D8;
-  border: 1px solid #71717A;
-  border-radius: 4px;
-  padding: 0.25rem 0.5rem;
+  border: 1px solid #27272A;
+  border-radius: 6px;
+  padding-left: 0.7rem;
+  width: 4rem;
+  height: 1.75rem;
   font-size: 14px;
   cursor: pointer;
+  appearance: none; 
+  background-image: url('/arrow-down.svg');
+  background-repeat: no-repeat;
+  background-position: right 0.8rem center;
+  background-size: 0.5rem; 
+  background-color: transparent; 
 
   &:focus {
     outline: none;
-    border-color: #10B981;
+    border-color: none;
+  }
+
+  &:focus-visible {
+    background-color: #000;
+    color: #FAFAFA;
+    font-size: 0.875rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+
+    @media (max-width: 480px) {
+      width: 100%;
+      justify-content: space-between;
+    }
   }
 `;
 export const RightContainer = styled.div`
@@ -296,15 +319,16 @@ export const PaginationContainer = styled.div`
 `;
 
 export const PaginationButton = styled.button`
-  background-color: transparent;
-  border: 1px solid #71717A;
+  background-color: #18181B;
+  border: 1px solid #27272A;
   color: #D4D4D8;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0.25rem 0.5rem;
+  width: 1.75rem;
+  height: 1.75rem;
   margin: 0 0.25rem;
-  border-radius: 4px;
+  border-radius: 8px;
   cursor: pointer;
   transition: background-color 0.3s ease;
 
@@ -321,4 +345,5 @@ export const PaginationButton = styled.button`
 export const Pages = styled.span`
   font-size: 14px;
   margin: 0 0.5rem;
+  color: #71717A;
 `;
