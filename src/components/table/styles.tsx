@@ -32,7 +32,7 @@ export const TableWrapper = styled.div`
 
 export const Divider = styled.div`
   width: 86%;
-  height: 1px;
+  height: 2px;
   background-color: #27272A;
 
   @media (max-width: 768px) {
@@ -42,10 +42,7 @@ export const Divider = styled.div`
 
 export const DividerInside = styled(Divider)`
   background-color: #27272A;
-  margin: 5px 0;
   width: 100%;
-  max-width: 100%;
-
   @media (max-width: 768px) {
     width: 100%;
     margin-left: 0;
@@ -54,7 +51,6 @@ export const DividerInside = styled(Divider)`
 
 
 export const CheckBox = styled.input.attrs({ type: 'checkbox' })`
-  margin-right: 10px;
   background-color: transparent;
   border: 1px solid #71717A; 
   border-radius: 4px;
@@ -79,10 +75,9 @@ export const CheckBox = styled.input.attrs({ type: 'checkbox' })`
 export const Title = styled.h2`
   font-size: 18px;
   font-weight: bold;
-  margin: 5px 0;
+  margin: 0px 0;
   color: #D4D4D8;
   text-align: center;
-  margin-left: 1rem;
 
   @media (max-width: 768px) {
     font-size: 16px;
@@ -96,7 +91,6 @@ export const Id = styled.p`
   margin: 5px 0;
   text-align: center;
   line-height: 1;
-  margin-left: 1rem;
 
   @media (max-width: 768px) {
     font-size: 12px;
@@ -122,6 +116,7 @@ export const Category = styled.p<{ color: string }>`
   text-align: center;
   display: flex;
   align-items: center;
+  padding-right: 0.5rem;
 
   &::before {
     content: '•';
@@ -146,8 +141,8 @@ export const Row = styled.div`
   grid-template-columns: auto 1fr auto auto;
   align-items: center;
   width: 85%;
-  padding: 10px 0;
-  gap: 2rem; 
+  padding: 0.75rem 0;
+  gap: 1.5rem; 
 
   @media (max-width: 768px) {
     grid-template-columns: auto 1fr auto auto;
@@ -188,7 +183,6 @@ export const SpacedCategory = styled(Category)`
 export const StyledDate = styled(Date)`
   grid-column: 3;
   justify-self: start; 
-
   @media (max-width: 768px) {
     grid-column: 3;
   }

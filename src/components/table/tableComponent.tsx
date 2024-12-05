@@ -30,7 +30,6 @@ export default function TableComponent() {
                 <DividerInside />
 
                 <Row>
-
                     <CheckBox />
                     <Column>
                         <Title>God of War Ragnarok</Title>
