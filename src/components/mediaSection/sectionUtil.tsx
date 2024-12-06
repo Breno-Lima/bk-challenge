@@ -429,7 +429,6 @@ export default function MediaComponent() {
     setIsCustomDropdownOpen(false);
   };
 
-
   const toggleCustomDropdown = () => {
     setIsCustomDropdownOpen(prev => !prev);
   };
