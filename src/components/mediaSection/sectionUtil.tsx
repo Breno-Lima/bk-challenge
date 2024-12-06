@@ -5,6 +5,11 @@ import styled from 'styled-components';
 interface SidebarOverlayProps {
   isOpen: boolean;
 }
+const UploadIcon = styled.img`
+  width: 1rem;
+  height: 1rem;
+  margin-right: 0.5rem;
+`;
 
 const ClearAll = styled.p`
   color: #71717A;
@@ -38,16 +43,17 @@ const SidebarParagraph = styled.p`
 
 const ContainerFinished = styled.div`
   display: flex;
-  justify-content: end;
+  justify-content: end; 
   align-items: center;
   gap: 1rem;
 `;
+
 
 const SidebarOverlay = styled.div<SidebarOverlayProps>`
   position: fixed;
   top: 0;
   right: 0;
-  width: ${props => props.isOpen ? '400px' : '0'};
+  width: ${props => props.isOpen ? '30rem' : '0'};
   height: 100%;
   background-color: #09090B;
   transition: width 0.3s ease-in-out;
@@ -108,9 +114,12 @@ const SidebarSubmitButton = styled.button`
   border: none;
   width: 8.375rem;
   height: 2rem;
-  border-radius: 8px;
+  border-radius: 6px;
   cursor: pointer;
-
+  display: flex; 
+  align-items: center; 
+  justify-content: center;
+  width: 8.75rem;
   &:hover {
     background-color: #177b5a;
   }
@@ -396,8 +405,10 @@ export default function MediaComponent() {
   const [mediaFile, setMediaFile] = useState<File | null>(null);
   const [mediaTitle, setMediaTitle] = useState("");
   const [mediaDescription, setMediaDescription] = useState("");
+  const [sidebarSelectedCategory, setSidebarSelectedCategory] = useState("");
+
   const dropdownRef = useRef<HTMLDivElement>(null);
-  
+
   const [isCustomDropdownOpen, setIsCustomDropdownOpen] = useState(false);
 
   const categories = [
@@ -412,6 +423,12 @@ export default function MediaComponent() {
     setSelectedCategory(value);
     setIsCustomDropdownOpen(false);
   };
+
+  const handleSidebarCategorySelect = (value: string) => {
+    setSidebarSelectedCategory(value);
+    setIsCustomDropdownOpen(false);
+  };
+
 
   const toggleCustomDropdown = () => {
     setIsCustomDropdownOpen(prev => !prev);
@@ -513,21 +530,28 @@ export default function MediaComponent() {
           <SidebarParagraph>
             Put the best files for BK Beta, 🤘🏽.
           </SidebarParagraph>
-          
+
           <FieldContainer>
             <SidebarLabel htmlFor="mediaCategory">Category</SidebarLabel>
             <CustomDropdown className="custom-dropdown" isOpen={isCustomDropdownOpen}>
               <DropdownHeader2 onClick={toggleCustomDropdown} isOpen={isCustomDropdownOpen} aria-haspopup="listbox" aria-expanded={isCustomDropdownOpen}>
                 <DropdownText>
-                  {selectedCategory ? categories.find(cat => cat.value === selectedCategory)?.label : "Select category"}
+                  {sidebarSelectedCategory
+                    ? categories.find(cat => cat.value === sidebarSelectedCategory)?.label
+                    : "Select category"}
                 </DropdownText>
-                <DropdownIcon src="/arrow-down.svg" alt="Dropdown Icon" isOpen={isCustomDropdownOpen} style={{ transform: isCustomDropdownOpen ? 'rotate(180deg)' : 'rotate(0deg)' }} />
+                <DropdownIcon
+                  src="/arrow-down.svg"
+                  alt="Dropdown Icon"
+                  isOpen={isCustomDropdownOpen}
+                  style={{ transform: isCustomDropdownOpen ? 'rotate(180deg)' : 'rotate(0deg)' }}
+                />
               </DropdownHeader2>
               {isCustomDropdownOpen && (
                 <DropdownList role="listbox">
                   <DropdownItem
                     key="placeholder"
-                    onClick={() => handleCategorySelect("")}
+                    onClick={() => handleSidebarCategorySelect("")}
                     style={{ color: '#3F3F46' }}
                   >
                     Select category
@@ -535,7 +559,7 @@ export default function MediaComponent() {
                   {categories.map((cat) => (
                     <DropdownItem
                       key={cat.value}
-                      onClick={() => handleCategorySelect(cat.value)}
+                      onClick={() => handleSidebarCategorySelect(cat.value)}
                     >
                       {cat.label}
                     </DropdownItem>
@@ -543,6 +567,7 @@ export default function MediaComponent() {
                 </DropdownList>
               )}
             </CustomDropdown>
+
           </FieldContainer>
 
           <FieldContainer>
@@ -571,13 +596,16 @@ export default function MediaComponent() {
             <ClearAll onClick={() => {
               setMediaTitle("");
               setMediaDescription("");
-              setSelectedCategory("");
+              setSidebarSelectedCategory("");
               setMediaFile(null);
             }}>
               Clear all
             </ClearAll>
+
+
             <SidebarSubmitButton onClick={handleSubmitMedia}>
-              Upload
+              <UploadIcon src="/check.svg" alt="Upload Icon" />
+              Upload Media
             </SidebarSubmitButton>
           </ContainerFinished>
         </SidebarContent>
