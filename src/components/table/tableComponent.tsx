@@ -1,117 +1,188 @@
-"use client"
-import React, { useState } from 'react';
+"use client";
+import React from 'react';
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
 import {
-    ContainerPage,
-    InfoPage,
-    RowsPageContainer,
-    RowsPage,
-    DropdownSelect,
-    PaginationContainer,
-    PaginationButton,
-    Pages,
-    CheckBox,
-    HeaderColumn,
-    HeaderRow,
-    StyledDate,
-    SpacedCategory,
-    Column,
-    Id,
-    Title,
-    DividerInside,
-    Divider,
-    TableWrapper,
-    Container,
-    RightContainer,
-    HeaderColumn2,
-    ContainerTest,
-    Row
+  ContainerPage,
+  InfoPage,
+  RowsPageContainer,
+  RowsPage,
+  DropdownSelect,
+  PaginationContainer,
+  PaginationButton,
+  Pages,
+  CheckBox,
+  HeaderColumn,
+  HeaderRow,
+  StyledDate,
+  SpacedCategory,
+  Column,
+  Id,
+  Title,
+  DividerInside,
+  Divider,
+  TableWrapper,
+  Container,
+  RightContainer,
+  ContainerTest,
+  Row
 } from './styles';
+import { fetchMedia, MediaResponse } from '@/app/api/media';
+import { parseAsInteger, useQueryState } from 'nuqs';
 
 export default function TableComponent() {
-    const [rowsPerPage, setRowsPerPage] = useState(10);
-    const [currentPage, setCurrentPage] = useState(1);
-    const totalPages = 11;
-    const totalItems = 228;
+  const [rowsPerPage, setRowsPerPage] = useQueryState('rowsPerPage', parseAsInteger.withDefault(10));
+  const [currentPage, setCurrentPage] = useQueryState('currentPage', parseAsInteger.withDefault(1));
+  const [search] = useQueryState<string>('search', { defaultValue: '', parse: (value) => value });
+  const [category] = useQueryState<string>('category', { defaultValue: '', parse: (value) => value });
 
-    const handleRowsPerPageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        setRowsPerPage(Number(e.target.value));
-        setCurrentPage(1);
-    };
+  const {
+    data: mediasData,
+    isLoading,
+    isError,
+    error,
+  } = useQuery<MediaResponse[], Error>({
+    queryKey: ['medias', search, category],
+    queryFn: () => fetchMedia(search, category),
+    staleTime: 5000,
+  });
 
-    const handleFirstPage = () => setCurrentPage(1);
-    const handlePreviousPage = () => setCurrentPage(Math.max(1, currentPage - 1));
-    const handleNextPage = () => setCurrentPage(Math.min(totalPages, currentPage + 1));
-    const handleLastPage = () => setCurrentPage(totalPages);
+  const filteredData = mediasData?.filter(media =>
+    media.title?.default[0].toLowerCase().includes(search.toLowerCase())
+  ) || [];
 
-    return (
-        <Container>
-            <Divider />
-            <TableWrapper>
-                <HeaderRow>
-                    <CheckBox />
-                    <HeaderColumn>Media</HeaderColumn>
-                    <HeaderColumn>Release Date</HeaderColumn>
-                    <HeaderColumn>Category</HeaderColumn>
-                </HeaderRow>
-                <DividerInside />
-                <Row>
-                    <CheckBox />
-                    <Column>
-                        <Title>God of War Ragnarok</Title>
-                        <Id>faba4daa-f7ef-483f-82ab-20f05d3d0de1</Id>
-                    </Column>
-                    <StyledDate>24/12/2024</StyledDate>
-                    <ContainerTest>
-                        <SpacedCategory color='#0447ff'>Videogame</SpacedCategory>
-                    </ContainerTest>
-                </Row>
-                <DividerInside />
-            </TableWrapper>
-            <ContainerPage>
-                <InfoPage>Showing {Math.min(rowsPerPage, totalItems)} of {totalItems} medias</InfoPage>
-                <RightContainer>
-                    <RowsPageContainer>
-                        <RowsPage>Rows per Page</RowsPage>
-                        <DropdownSelect
-                            value={rowsPerPage}
-                            onChange={handleRowsPerPageChange}
-                        >
-                            <option value={10}>10</option>
-                            <option value={20}>20</option>
-                            <option value={30}>30</option>
-                            <option value={50}>50</option>
-                        </DropdownSelect>
-                    </RowsPageContainer>
-                    <PaginationContainer>
-                        <Pages>Page {currentPage} of {totalPages}</Pages>
-                        <PaginationButton
-                            onClick={handleFirstPage}
-                            disabled={currentPage === 1}
-                        >
-                            <ChevronsLeft size={16} />
-                        </PaginationButton>
-                        <PaginationButton
-                            onClick={handlePreviousPage}
-                            disabled={currentPage === 1}
-                        >
-                            <ChevronLeft size={16} />
-                        </PaginationButton>
-                        <PaginationButton
-                            onClick={handleNextPage}
-                            disabled={currentPage === totalPages}
-                        >
-                            <ChevronRight size={16} />
-                        </PaginationButton>
-                        <PaginationButton
-                            onClick={handleLastPage}
-                            disabled={currentPage === totalPages}
-                        >
-                            <ChevronsRight size={16} />
-                        </PaginationButton>
-                    </PaginationContainer>
-                </RightContainer>
-            </ContainerPage>
-        </Container>
-    );
+  const totalItems = filteredData.length;
+  const totalPages = Math.ceil(totalItems / rowsPerPage);
+
+  const handleRowsPerPageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setRowsPerPage(Number(e.target.value));
+    setCurrentPage(1);
+  };
+
+  const handleFirstPage = () => setCurrentPage(1);
+  const handlePreviousPage = () => setCurrentPage(prev => Math.max(1, prev - 1));
+  const handleNextPage = () => setCurrentPage(prev => Math.min(totalPages, prev + 1));
+  const handleLastPage = () => setCurrentPage(totalPages);
+
+  const paginatedData = filteredData.slice(
+    (currentPage - 1) * rowsPerPage,
+    currentPage * rowsPerPage
+  );
+
+  return (
+    <Container>
+      <Divider />
+      <TableWrapper>
+        <HeaderRow>
+          <CheckBox />
+          <HeaderColumn>Media</HeaderColumn>
+          <HeaderColumn>Release Date</HeaderColumn>
+          <HeaderColumn>Category</HeaderColumn>
+        </HeaderRow>
+        <DividerInside />
+        {isLoading ? (
+          <Row>
+            <CheckBox disabled />
+            <Column>
+              <Title>Loading...</Title>
+              <Id>N/A</Id>
+            </Column>
+            <StyledDate>N/A</StyledDate>
+            <ContainerTest>
+              <SpacedCategory color='#0447ff'>Loading</SpacedCategory>
+            </ContainerTest>
+          </Row>
+        ) : isError ? (
+          <Row>
+            <CheckBox disabled />
+            <Column>
+              <Title>Error Loading Media</Title>
+              <Id>{error?.message}</Id>
+            </Column>
+            <StyledDate>N/A</StyledDate>
+            <ContainerTest>
+              <SpacedCategory color='#ff0000'>Error</SpacedCategory>
+            </ContainerTest>
+          </Row>
+        ) : paginatedData && paginatedData.length > 0 ? (
+          paginatedData.map(media => (
+            <React.Fragment key={media.id}>
+              <Row>
+                <CheckBox />
+                <Column>
+                  <Title>{media.title?.default[0]}</Title>
+                  <Id>{media.id}</Id>
+                </Column>
+                <StyledDate>
+                  {media.releaseDate
+                    ? new Date(media.releaseDate).toLocaleDateString()
+                    : 'N/A'}
+                </StyledDate>
+                <ContainerTest>
+                  <SpacedCategory color='#0447ff'>{media.category}</SpacedCategory>
+                </ContainerTest>
+              </Row>
+              <DividerInside />
+            </React.Fragment>
+          ))
+        ) : (
+          <Row>
+            <CheckBox disabled />
+            <Column>
+              <Title>No media found.</Title>
+              <Id>N/A</Id>
+            </Column>
+            <StyledDate>N/A</StyledDate>
+            <ContainerTest>
+              <SpacedCategory color='#0447ff'>N/A</SpacedCategory>
+            </ContainerTest>
+          </Row>
+        )}
+      </TableWrapper>
+      <ContainerPage>
+        <InfoPage>Showing {Math.min(rowsPerPage, totalItems)} of {totalItems} medias</InfoPage>
+        <RightContainer>
+          <RowsPageContainer>
+            <RowsPage>Rows per Page</RowsPage>
+            <DropdownSelect
+              value={rowsPerPage}
+              onChange={handleRowsPerPageChange}
+            >
+              <option value={10}>10</option>
+              <option value={20}>20</option>
+              <option value={30}>30</option>
+              <option value={50}>50</option>
+            </DropdownSelect>
+          </RowsPageContainer>
+          <PaginationContainer>
+            <Pages>Page {currentPage} of {totalPages}</Pages>
+            <PaginationButton
+              onClick={handleFirstPage}
+              disabled={currentPage === 1}
+            >
+              <ChevronsLeft size={16} />
+            </PaginationButton>
+            <PaginationButton
+              onClick={handlePreviousPage}
+              disabled={currentPage === 1}
+            >
+              <ChevronLeft size={16} />
+            </PaginationButton>
+            <PaginationButton
+              onClick={handleNextPage}
+              disabled={currentPage === totalPages}
+            >
+              <ChevronRight size={16} />
+            </PaginationButton>
+            <PaginationButton
+              onClick={handleLastPage}
+              disabled={currentPage === totalPages}
+            >
+              <ChevronsRight size={16} />
+            </PaginationButton>
+          </PaginationContainer>
+        </RightContainer>
+      </ContainerPage>
+    </Container>
+  );
 }

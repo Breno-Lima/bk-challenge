@@ -1,8 +1,10 @@
+// components/media/MediaComponent.tsx
 "use client";
 import React, { useState, useRef, useEffect } from "react";
 import styled from 'styled-components';
 import { useMutation } from '@tanstack/react-query';
 import { createMedia, LiteraryWorkType, type MediaData, type MediaResponse } from "@/app/api/media";
+import { useQueryState } from 'nuqs';
 
 interface SidebarOverlayProps {
   isOpen: boolean;
@@ -22,7 +24,6 @@ const ClearAll = styled.p`
   height: 2rem;
   border-radius: 8px;
   cursor: pointer;
-
   display: flex;
   align-items: center;
   justify-content: center;
@@ -63,7 +64,6 @@ const SidebarOverlay = styled.div<SidebarOverlayProps>`
   z-index: 1100;
   overflow-y: auto;
   overflow-x: hidden ;
-
   @media (max-width: 480px) {
     width: ${props => props.isOpen ? '100%' : '0'};
   }
@@ -99,12 +99,10 @@ const SidebarInput = styled.input`
   background-color: #18181b66;
   color: #FAFAFA;
   box-sizing: border-box; 
-
   &:focus {
     outline: none;
     border-color: #10B981;
   }
-
   &::placeholder {
     color: #71717A;
   }
@@ -125,7 +123,6 @@ const SidebarSubmitButton = styled.button<{ disabled?: boolean }>`
   &:hover {
     background-color: #177b5a;
   }
-
   &:disabled {
     background-color: #6B7280;
     cursor: not-allowed;
@@ -148,11 +145,9 @@ const Container = styled.div`
   flex-direction: column;
   gap: 1rem;
   padding: 0rem 6.5rem;
-
   @media (max-width: 768px) {
     padding: 0rem 2rem;
   }
-
   @media (max-width: 480px) {
     padding: 0rem 1rem;
   }
@@ -161,7 +156,6 @@ const Container = styled.div`
 const Title = styled.h1`
   font-size: 2rem;
   color: #FAFAFA;
-
   @media (max-width: 480px) {
     font-size: 1.5rem;
   }
@@ -171,21 +165,17 @@ const InputWithIcon = styled.div`
   position: relative;
   display: flex;
   align-items: center;
-
   input {
     padding-left: 2.5rem;
     color: #FAFAFA;
-    
     &:focus {
       outline: none;
       border-color: #3F3F46; 
     }
-
     &::placeholder {
       color: #71717A;
     }
   }
-
   img {
     position: absolute;
     left: 0.75rem;
@@ -209,7 +199,6 @@ const StyledButtonImage = styled.img`
 const DropdownContainer = styled.div`
   position: relative;
   width: 6.75rem;
-  
   @media (max-width: 480px) {
     width: calc(100% - 2rem); 
   }
@@ -234,9 +223,7 @@ const DropdownHeader = styled.div<{ isOpen: boolean }>`
   align-items: center;
   justify-content: space-between; 
   gap: 1rem; 
-
   transition: border 0.3s ease-in-out;
-
   &:hover {
     border-color: #10B981;
   }
@@ -255,9 +242,7 @@ const DropdownHeader2 = styled.div<{ isOpen: boolean }>`
   align-items: center;
   justify-content: space-between; 
   gap: 1rem; 
-
   transition: border 0.3s ease-in-out;
-
   &:hover {
     border-color: #10B981;
   }
@@ -303,7 +288,6 @@ const DropdownItem = styled.li`
   cursor: pointer;
   text-align: left;
   font-size: 0.875rem;
-
   &:hover {
     background-color: #1f1f1f;
   }
@@ -316,22 +300,19 @@ const SearchMedia = styled.input`
   width: 23rem;
   background-color: transparent;
   color: #71717A;
-
   &:focus {
     outline: none;
     border-color: #3F3F46;
   }
-
   &::placeholder {
     color: #71717A;
   }
-
   @media (max-width: 480px) {
     width: 100%;
   }
 `;
 
-const ButtonUploadMedia = styled.button`
+export const ButtonUploadMedia = styled.button`
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -343,52 +324,47 @@ const ButtonUploadMedia = styled.button`
   border: none;
   border-radius: 2rem;
   cursor: pointer;
-
   &:hover {
     background-color: #177b5a;
     transition: background-color 0.5s;
   }
-
   img {
     width: 1rem;
     height: 1rem;
   }
-
   @media (max-width: 480px) {
     width: 100%;
     justify-content: center;
   }
 `;
 
-const InsideContainer = styled.div`
+export const InsideContainer = styled.div`
   display: flex;
   gap: 1rem;
   justify-content: space-between;
-
   @media (max-width: 480px) {
     flex-direction: column;
     gap: 0.5rem;
   }
 `;
 
-const InsideInContainer = styled.div`
+export const InsideInContainer = styled.div`
   display: flex;
   gap: 1rem;
-
   @media (max-width: 480px) {
     flex-direction: column;
     gap: 0.5rem;
   }
 `;
 
-const FieldContainer = styled.div`
+export const FieldContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 0.2rem;
   width: 100%;
 `;
 
-const SidebarBackdrop = styled.div<SidebarOverlayProps>`
+export const SidebarBackdrop = styled.div<SidebarOverlayProps>`
   position: fixed;
   top: 0;
   left: 0;
@@ -401,38 +377,29 @@ const SidebarBackdrop = styled.div<SidebarOverlayProps>`
   z-index: 1099;
 `;
 
-
 const literaryWorkTypes = Object.values(LiteraryWorkType);
 
-
 export default function MediaComponent() {
-  const [selectedCategory, setSelectedCategory] = useState<string>("");
+  const [search, setSearch] = useQueryState<string>('search', { defaultValue: '', parse: (value) => value });
+  const [category, setCategory] = useQueryState<string>('category', { defaultValue: '', parse: (value) => value });
+  
   const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
-
-  const [sidebarSelectedCategory, setSidebarSelectedCategory] = useState<string>("");
-
   const [videoLink, setVideoLink] = useState<string>("");
-  
   const [generalTitle, setGeneralTitle] = useState<string>("");
-  
   const [movieDuration, setMovieDuration] = useState<string>("");
   const [movieReleaseDate, setMovieReleaseDate] = useState<string>("");
-  
   const [chapterNumber, setChapterNumber] = useState<number | "">("");
   const [chapterPages, setChapterPages] = useState<number | "">("");
   const [chapterReleaseDate, setChapterReleaseDate] = useState<string>("");
   const [chapterSourceId, setChapterSourceId] = useState<string>("");
-  
   const [literaryWorkCurrentChapters, setLiteraryWorkCurrentChapters] = useState<number | "">("");
   const [literaryWorkOngoing, setLiteraryWorkOngoing] = useState<boolean>(true);
   const [literaryWorkSynopsis, setLiteraryWorkSynopsis] = useState<string>("");
   const [literaryWorkType, setLiteraryWorkType] = useState<string>("");
   const [literaryWorkTags, setLiteraryWorkTags] = useState<string>("");
-
   const dropdownRef = useRef<HTMLDivElement>(null);
   const [isCustomDropdownOpen, setIsCustomDropdownOpen] = useState<boolean>(false);
-
   const categories = [
     { value: "chapter", label: "Chapter" },
     { value: "literary_work", label: "Literary Work" },
@@ -442,14 +409,13 @@ export default function MediaComponent() {
   ];
 
   const handleCategorySelect = (value: string) => {
-    setSelectedCategory(value);
+    setCategory(value);
     setIsDropdownOpen(false);
   };
 
   const handleSidebarCategorySelect = (value: string) => {
-    setSidebarSelectedCategory(value);
+    setCategory(value);
     setIsCustomDropdownOpen(false);
-    // Limpa campos ao mudar a categoria
     resetFields();
   };
 
@@ -488,62 +454,47 @@ export default function MediaComponent() {
   const mutation = useMutation<MediaResponse, Error, MediaData>({
     mutationFn: createMedia,
     onSuccess: () => {
-      alert("Mídia criada com sucesso!");
-
       resetFields();
-      setSidebarSelectedCategory("");
+      setCategory("");
       setIsSidebarOpen(false);
     },
     onError: (error: Error) => {
       console.error(error);
-      alert("Erro ao criar mídia. Verifique o console.");
     },
   });
 
   const handleSubmitMedia = () => {
-
-    const category = sidebarSelectedCategory;
-    if (!category) {
+    const selectedCategory = category;
+    if (!selectedCategory) {
       alert("Por favor, selecione uma categoria.");
       return;
     }
-
-    const data: MediaData = { category };
-
-
-    switch (category) {
+    const data: MediaData = { category: selectedCategory as string };
+    switch (selectedCategory) {
       case "video":
-
         if (!videoLink) {
           alert("O campo 'Link' é obrigatório para vídeo.");
           return;
         }
         data.link = videoLink;
         break;
-
       case "video_game":
-
         if (!generalTitle) {
           alert("O campo 'Title' é obrigatório para Video Game.");
           return;
         }
         data.title = { default: [generalTitle] };
         break;
-
       case "movie":
-
         if (!generalTitle) {
           alert("O campo 'Title' é obrigatório para Movie.");
           return;
         }
         data.title = { default: [generalTitle] };
-
         if (movieDuration) data.duration = movieDuration;
         if (movieReleaseDate) data.releaseDate = new Date(movieReleaseDate).toISOString();
         break;
-
       case "chapter":
-
         if (!generalTitle) {
           alert("O campo 'Title' é obrigatório para Chapter.");
           return;
@@ -556,17 +507,13 @@ export default function MediaComponent() {
           alert("O campo 'Source ID' é obrigatório para Chapter.");
           return;
         }
-
         data.title = { default: [generalTitle] };
         data.number = Number(chapterNumber);
         data.sourceId = chapterSourceId;
-
         if (chapterPages !== "" && !isNaN(Number(chapterPages))) data.pages = Number(chapterPages);
         if (chapterReleaseDate) data.releaseDate = new Date(chapterReleaseDate).toISOString();
         break;
-
       case "literary_work":
-
         if (!generalTitle) {
           alert("O campo 'Title' é obrigatório para Literary Work.");
           return;
@@ -575,10 +522,8 @@ export default function MediaComponent() {
           alert("O campo 'Type' é obrigatório para Literary Work.");
           return;
         }
-
         data.title = { default: [generalTitle] };
         data.type = literaryWorkType;
-
         if (literaryWorkCurrentChapters !== "" && !isNaN(Number(literaryWorkCurrentChapters))) {
           data.currentChapters = Number(literaryWorkCurrentChapters);
         }
@@ -586,12 +531,10 @@ export default function MediaComponent() {
         if (literaryWorkSynopsis) data.synopsis = { "en": [literaryWorkSynopsis] };
         if (literaryWorkTags) data.tags = literaryWorkTags.split(",").map(t => t.trim());
         break;
-
       default:
         alert("Categoria não suportada.");
         return;
     }
-
     mutation.mutate(data);
   };
 
@@ -604,7 +547,6 @@ export default function MediaComponent() {
         setIsCustomDropdownOpen(false);
       }
     };
-
     document.addEventListener("mousedown", handleClickOutside);
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
@@ -612,39 +554,33 @@ export default function MediaComponent() {
   }, []);
 
   const renderCategoryInputs = () => {
-    switch (sidebarSelectedCategory) {
+    switch (category) {
       case "video":
         return (
-          <>
-            <FieldContainer>
-              <SidebarLabel htmlFor="videoLink">Link (required)</SidebarLabel>
-              <SidebarInput
-                id="videoLink"
-                type="text"
-                placeholder="Insira o link do vídeo..."
-                value={videoLink}
-                onChange={(e) => setVideoLink(e.target.value)}
-              />
-            </FieldContainer>
-          </>
+          <FieldContainer>
+            <SidebarLabel htmlFor="videoLink">Link (required)</SidebarLabel>
+            <SidebarInput
+              id="videoLink"
+              type="text"
+              placeholder="Insira o link do vídeo..."
+              value={videoLink}
+              onChange={(e) => setVideoLink(e.target.value)}
+            />
+          </FieldContainer>
         );
-
       case "video_game":
         return (
-          <>
-            <FieldContainer>
-              <SidebarLabel htmlFor="generalTitle">Title (required)</SidebarLabel>
-              <SidebarInput
-                id="generalTitle"
-                type="text"
-                placeholder="Insira o título..."
-                value={generalTitle}
-                onChange={(e) => setGeneralTitle(e.target.value)}
-              />
-            </FieldContainer>
-          </>
+          <FieldContainer>
+            <SidebarLabel htmlFor="generalTitle">Title (required)</SidebarLabel>
+            <SidebarInput
+              id="generalTitle"
+              type="text"
+              placeholder="Insira o título..."
+              value={generalTitle}
+              onChange={(e) => setGeneralTitle(e.target.value)}
+            />
+          </FieldContainer>
         );
-
       case "movie":
         return (
           <>
@@ -658,7 +594,6 @@ export default function MediaComponent() {
                 onChange={(e) => setGeneralTitle(e.target.value)}
               />
             </FieldContainer>
-
             <FieldContainer>
               <SidebarLabel htmlFor="movieDuration">Duration (optional)</SidebarLabel>
               <SidebarInput
@@ -669,7 +604,6 @@ export default function MediaComponent() {
                 onChange={(e) => setMovieDuration(e.target.value)}
               />
             </FieldContainer>
-
             <FieldContainer>
               <SidebarLabel htmlFor="movieReleaseDate">Release Date (optional)</SidebarLabel>
               <SidebarInput
@@ -681,7 +615,6 @@ export default function MediaComponent() {
             </FieldContainer>
           </>
         );
-
       case "chapter":
         return (
           <>
@@ -702,7 +635,7 @@ export default function MediaComponent() {
                 type="number"
                 placeholder="Número do capítulo"
                 value={chapterNumber}
-                onChange={(e) => setChapterNumber(e.target.value as any)}
+                onChange={(e) => setChapterNumber(Number(e.target.value))}
               />
             </FieldContainer>
             <FieldContainer>
@@ -722,7 +655,7 @@ export default function MediaComponent() {
                 type="number"
                 placeholder="Quantidade de páginas"
                 value={chapterPages}
-                onChange={(e) => setChapterPages(e.target.value as any)}
+                onChange={(e) => setChapterPages(Number(e.target.value))}
               />
             </FieldContainer>
             <FieldContainer>
@@ -736,7 +669,6 @@ export default function MediaComponent() {
             </FieldContainer>
           </>
         );
-
       case "literary_work":
         return (
           <>
@@ -750,7 +682,6 @@ export default function MediaComponent() {
                 onChange={(e) => setGeneralTitle(e.target.value)}
               />
             </FieldContainer>
-
             <FieldContainer>
               <SidebarLabel htmlFor="literaryWorkType">Type (required)</SidebarLabel>
               <SidebarInput
@@ -765,7 +696,6 @@ export default function MediaComponent() {
                 ))}
               </SidebarInput>
             </FieldContainer>
-
             <FieldContainer>
               <SidebarLabel htmlFor="literaryWorkCurrentChapters">Current Chapters (optional)</SidebarLabel>
               <SidebarInput
@@ -773,10 +703,9 @@ export default function MediaComponent() {
                 type="number"
                 placeholder="Capítulos atuais"
                 value={literaryWorkCurrentChapters}
-                onChange={(e) => setLiteraryWorkCurrentChapters(e.target.value as any)}
+                onChange={(e) => setLiteraryWorkCurrentChapters(Number(e.target.value))}
               />
             </FieldContainer>
-
             <FieldContainer>
               <SidebarLabel htmlFor="literaryWorkOngoing">Ongoing (optional)</SidebarLabel>
               <SidebarInput
@@ -789,7 +718,6 @@ export default function MediaComponent() {
                 <option value="false">No</option>
               </SidebarInput>
             </FieldContainer>
-
             <FieldContainer>
               <SidebarLabel htmlFor="literaryWorkSynopsis">Synopsis (optional)</SidebarLabel>
               <SidebarInput
@@ -800,7 +728,6 @@ export default function MediaComponent() {
                 onChange={(e) => setLiteraryWorkSynopsis(e.target.value)}
               />
             </FieldContainer>
-
             <FieldContainer>
               <SidebarLabel htmlFor="literaryWorkTags">Tags (optional, separated by commas)</SidebarLabel>
               <SidebarInput
@@ -813,7 +740,6 @@ export default function MediaComponent() {
             </FieldContainer>
           </>
         );
-
       default:
         return null;
     }
@@ -831,7 +757,7 @@ export default function MediaComponent() {
                 <DropdownHeader onClick={toggleDropdown} isOpen={isDropdownOpen}>
                   <DropdownIcon2 src="/tags.svg" alt="Dropdown Icon" isOpen={isDropdownOpen} />
                   <span style={{ marginLeft: '1.3rem' }}>
-                    {selectedCategory ? categories.find(cat => cat.value === selectedCategory)?.label : "Category"}
+                    {category ? categories.find(cat => cat.value === category)?.label : "Category"}
                   </span>
                 </DropdownHeader>
                 {isDropdownOpen && (
@@ -850,7 +776,11 @@ export default function MediaComponent() {
             </InputWithIcon>
             <InputWithIcon>
               <StyledImage src="/search.svg" alt="Search Icon" />
-              <SearchMedia placeholder="Search Upload" />
+              <SearchMedia 
+                placeholder="Search Upload" 
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              />
             </InputWithIcon>
           </InsideInContainer>
           <ButtonUploadMedia onClick={handleUploadClick}>
@@ -859,7 +789,6 @@ export default function MediaComponent() {
           </ButtonUploadMedia>
         </InsideContainer>
       </Container>
-
       {isSidebarOpen && <SidebarBackdrop isOpen={isSidebarOpen} onClick={handleCloseSidebar} />}
       <SidebarOverlay isOpen={isSidebarOpen}>
         <CloseButton onClick={handleCloseSidebar}>×</CloseButton>
@@ -871,21 +800,19 @@ export default function MediaComponent() {
           <SidebarParagraph>
             Put the best files for BK Beta, 🤘🏽.
           </SidebarParagraph>
-
           <FieldContainer>
             <SidebarLabel htmlFor="mediaCategory">Category</SidebarLabel>
             <CustomDropdown className="custom-dropdown" isOpen={isCustomDropdownOpen}>
               <DropdownHeader2 onClick={toggleCustomDropdown} isOpen={isCustomDropdownOpen} aria-haspopup="listbox" aria-expanded={isCustomDropdownOpen}>
                 <DropdownText>
-                  {sidebarSelectedCategory
-                    ? categories.find(cat => cat.value === sidebarSelectedCategory)?.label
+                  {category
+                    ? categories.find(cat => cat.value === category)?.label
                     : "Select category"}
                 </DropdownText>
                 <DropdownIcon
                   src="/arrow-down.svg"
                   alt="Dropdown Icon"
                   isOpen={isCustomDropdownOpen}
-                  style={{ transform: isCustomDropdownOpen ? 'rotate(180deg)' : 'rotate(0deg)' }}
                 />
               </DropdownHeader2>
               {isCustomDropdownOpen && (
@@ -909,17 +836,14 @@ export default function MediaComponent() {
               )}
             </CustomDropdown>
           </FieldContainer>
-
           {renderCategoryInputs()}
-
           <ContainerFinished>
             <ClearAll onClick={() => {
               resetFields();
-              setSidebarSelectedCategory("");
+              setCategory("");
             }}>
               Clear all
             </ClearAll>
-
             <SidebarSubmitButton onClick={handleSubmitMedia} disabled={mutation.status === 'pending'}>
               {mutation.status === 'pending' ? 'Uploading...' : (
                 <>
@@ -929,7 +853,6 @@ export default function MediaComponent() {
               )}
             </SidebarSubmitButton>
           </ContainerFinished>
-
           {mutation.isError && (
             <p style={{ color: 'red' }}>Erro ao enviar mídia: {mutation.error instanceof Error ? mutation.error.message : 'Erro desconhecido'}</p>
           )}

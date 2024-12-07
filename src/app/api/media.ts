@@ -1,4 +1,3 @@
-// src/api/media.ts
 export interface MediaData {
     category: string;
     link?: string;
@@ -18,37 +17,39 @@ export interface MediaData {
     };
     tags?: string[];
   }
-
-export enum LiteraryWorkType {
-ARTICLE = "article",
-BIOGRAPHY = "biography",
-COMICS = "comics",
-DIARY = "diary",
-EPIC = "epic",
-ESSAY = "essay",
-FLASH_FICTION = "flash_fiction",
-GRAPHIC_NOVEL = "graphic_novel",
-JOURNAL = "journal",
-LIGHT_NOVEL = "light_novel",
-MANGA = "manga",
-MANHUA = "manhua",
-MANHWA = "manhwa",
-MEMOIR = "memoir",
-NOVEL = "novel",
-NOVELETTE = "novelette",
-NOVELLA = "novella",
-POETRY = "poetry",
-SCRIPT = "script",
-SHORT_STORY = "short_story",
-WEB_NOVEL = "web_novel",
-WEBTOON = "webtoon",
-}
+  
+  export enum LiteraryWorkType {
+    ARTICLE = "article",
+    BIOGRAPHY = "biography",
+    COMICS = "comics",
+    DIARY = "diary",
+    EPIC = "epic",
+    ESSAY = "essay",
+    FLASH_FICTION = "flash_fiction",
+    GRAPHIC_NOVEL = "graphic_novel",
+    JOURNAL = "journal",
+    LIGHT_NOVEL = "light_novel",
+    MANGA = "manga",
+    MANHUA = "manhua",
+    MANHWA = "manhwa",
+    MEMOIR = "memoir",
+    NOVEL = "novel",
+    NOVELETTE = "novelette",
+    NOVELLA = "novella",
+    POETRY = "poetry",
+    SCRIPT = "script",
+    SHORT_STORY = "short_story",
+    WEB_NOVEL = "web_novel",
+    WEBTOON = "webtoon",
+  }
+  
   export interface MediaResponse {
     id: string;
-    category: string;
     title: {
       default: string[];
     };
+    category: string;
+    releaseDate?: string;
   }
   
   export async function createMedia(data: MediaData): Promise<MediaResponse> {
@@ -68,3 +69,25 @@ WEBTOON = "webtoon",
     return response.json();
   }
   
+  export async function fetchMedia(search?: string, category?: string): Promise<MediaResponse[]> {
+    let url = 'https://enki.hyoretsu.com/media';
+    const params = new URLSearchParams();
+  
+    if (search) {
+      params.append('search', search);
+    }
+  
+    if (category) {
+      params.append('category', category);
+    }
+  
+    if ([...params].length > 0) {
+      url += `?${params.toString()}`;
+    }
+  
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error('Erro ao buscar mídias');
+    }
+    return response.json();
+  }
