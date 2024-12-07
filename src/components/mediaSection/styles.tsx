@@ -2,15 +2,15 @@
 import styled from 'styled-components';
 
 interface SidebarOverlayProps {
-  isOpen: boolean;
+  $isOpen: boolean;
 }
 
 interface SidebarContentProps {
-  isOpen: boolean;
+  $isOpen: boolean;
 }
 
 interface DropdownIconProps {
-  isOpen: boolean;
+  $isOpen: boolean;
 }
 
 export const UploadIcon = styled.img`
@@ -59,7 +59,7 @@ export const SidebarOverlay = styled.div<SidebarOverlayProps>`
   position: fixed;
   top: 0;
   right: 0;
-  width: ${props => props.isOpen ? '30rem' : '0'};
+  width: ${props => props.$isOpen ? '30rem' : '0'};
   height: 100%;
   background-color: #09090B;
   transition: width 0.3s ease-in-out;
@@ -69,14 +69,14 @@ export const SidebarOverlay = styled.div<SidebarOverlayProps>`
   overflow-x: hidden ;
 
   @media (max-width: 480px) {
-    width: ${props => props.isOpen ? '100%' : '0'};
+    width: ${props => props.$isOpen ? '100%' : '0'};
   }
 `;
 
 export const SidebarContent = styled.div<SidebarContentProps>`
   padding: 2rem;
   color: #FAFAFA;
-  opacity: ${props => props.isOpen ? 1 : 0};
+  opacity: ${props => props.$isOpen ? 1 : 0};
   transition: opacity 0.3s ease-in-out;
   display: flex;
   flex-direction: column;
@@ -209,21 +209,21 @@ export const StyledButtonImage = styled.img`
 
 export const DropdownContainer = styled.div`
   position: relative;
-  width: 10rem;
+  width: auto;
   
   @media (max-width: 480px) {
     width: calc(100% - 2rem); 
   }
 `;
 
-export const CustomDropdown = styled.div<{ isOpen: boolean }>`
+export const CustomDropdown = styled.div<{ $isOpen: boolean }>`
   position: relative;
   border: 1px solid #3F3F46;
   width: 100%;
   border-radius: 8px;
 `;
 
-export const DropdownHeader = styled.div<{ isOpen: boolean }>`
+export const DropdownHeader = styled.div<{ $isOpen: boolean }>`
   padding: 0.5rem 0.8rem;
   border: 1px dashed #3F3F46;
   border-radius: 48px;
@@ -243,7 +243,7 @@ export const DropdownHeader = styled.div<{ isOpen: boolean }>`
   }
 `;
 
-export const DropdownHeader2 = styled.div<{ isOpen: boolean }>`
+export const DropdownHeader2 = styled.div<{ $isOpen: boolean }>`
   padding: 0rem 0.8rem;
   border: 1px solid #3F3F46;
   border-radius: 8px;
@@ -270,7 +270,7 @@ export const DropdownIcon = styled.img<DropdownIconProps>`
   width: 1rem;
   height: 1rem;
   transition: transform 0.3s ease-in-out;
-  transform: ${props => props.isOpen ? 'rotate(180deg)' : 'rotate(0deg)'};
+  transform: ${props => props.$isOpen ? 'rotate(180deg)' : 'rotate(0deg)'};
 `;
 
 export const DropdownIcon2 = styled.img<DropdownIconProps>`
@@ -283,6 +283,7 @@ export const DropdownList = styled.ul`
   top: 110%;
   left: 0;
   right: 0;
+  width: 10rem;
   background-color: #000;
   border: 1px dashed #3F3F46;
   border-radius: 12px;
@@ -393,7 +394,7 @@ export const SidebarBackdrop = styled.div<SidebarOverlayProps>`
   height: 100%;
   background-color: rgba(0,0,0,0.5); 
   transition: opacity 0.3s ease-in-out;
-  opacity: ${props => props.isOpen ? 1 : 0};
-  pointer-events: ${props => props.isOpen ? 'auto' : 'none'};
+  opacity: ${props => props.$isOpen ? 1 : 0};
+  pointer-events: ${props => props.$isOpen ? 'auto' : 'none'};
   z-index: 1099;
 `;

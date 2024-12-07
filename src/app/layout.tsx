@@ -1,4 +1,3 @@
-// app/layout.tsx ou onde seu RootLayout está definido
 "use client";
 
 import Header from "@/components/header/header";

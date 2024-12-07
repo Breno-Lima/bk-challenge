@@ -7,7 +7,7 @@ import { useDebounce } from '@/hooks/useDebounce';
 
 export default function Home() {
   const [search, setSearch] = useState<string>(''); 
-  const debouncedSearch = useDebounce<string>(search, 300); 
+  const debouncedSearch = useDebounce<string>(search, 100); 
 
   return (
     <>

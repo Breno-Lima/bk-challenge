@@ -36,6 +36,8 @@ import {
   FieldContainer,
   SidebarBackdrop
 } from "./styles";
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const literaryWorkTypes = Object.values(LiteraryWorkType);
 interface MediaComponentProps {
@@ -44,7 +46,11 @@ interface MediaComponentProps {
 }
 export default function MediaComponent({ search, setSearch }: MediaComponentProps) {
 
+
   const [category, setCategory] = useQueryState<string>('category', { defaultValue: '', parse: (value) => value });
+
+
+  const [sidebarCategory, setSidebarCategory] = useState<string>('');
 
   const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
@@ -65,7 +71,7 @@ export default function MediaComponent({ search, setSearch }: MediaComponentProp
   const [isCustomDropdownOpen, setIsCustomDropdownOpen] = useState<boolean>(false);
 
   const categories = [
-    { value: "chapter", label: "Chapter" },
+    // { value: "chapter", label: "Chapter" }, //Não tem como filtrar um capítulo pq precisa passar os query params (title e mediaId)
     { value: "literary_work", label: "Literary Work" },
     { value: "movie", label: "Movie" },
     { value: "video", label: "Video" },
@@ -78,9 +84,9 @@ export default function MediaComponent({ search, setSearch }: MediaComponentProp
   };
 
   const handleSidebarCategorySelect = (value: string) => {
-    setCategory(value);
+    setSidebarCategory(value);
     setIsCustomDropdownOpen(false);
-    resetFields();
+    resetInputFields();
   };
 
   const toggleCustomDropdown = () => {
@@ -99,7 +105,7 @@ export default function MediaComponent({ search, setSearch }: MediaComponentProp
     setIsSidebarOpen(false);
   };
 
-  const resetFields = () => {
+  const resetInputFields = () => {
     setGeneralTitle("");
     setVideoLink("");
     setMovieDuration("");
@@ -115,6 +121,11 @@ export default function MediaComponent({ search, setSearch }: MediaComponentProp
     setLiteraryWorkTags("");
   };
 
+  const resetFields = () => {
+    resetInputFields();
+    setSidebarCategory("");
+  };
+
   const mutation = useMutation<MediaResponse, Error, MediaData>({
     mutationFn: createMedia,
     onSuccess: () => {
@@ -123,35 +134,35 @@ export default function MediaComponent({ search, setSearch }: MediaComponentProp
       setIsSidebarOpen(false);
     },
     onError: (error: Error) => {
-      console.error(error);
+      toast.error(`Erro ao enviar mídia: ${error.message}`);
     },
   });
 
   const handleSubmitMedia = () => {
-    const selectedCategory = category;
+    const selectedCategory = sidebarCategory;
     if (!selectedCategory) {
-      alert("Por favor, selecione uma categoria.");
+      toast.warn("Por favor, selecione uma categoria.");
       return;
     }
     const data: MediaData = { category: selectedCategory as string };
     switch (selectedCategory) {
       case "video":
         if (!videoLink) {
-          alert("O campo 'Link' é obrigatório para vídeo.");
+          toast.warn("O campo 'Link' é obrigatório para vídeo.");
           return;
         }
         data.link = videoLink;
         break;
       case "video_game":
         if (!generalTitle) {
-          alert("O campo 'Title' é obrigatório para Video Game.");
+          toast.warn("O campo 'Title' é obrigatório para Video Game.");
           return;
         }
         data.title = { default: [generalTitle] };
         break;
       case "movie":
         if (!generalTitle) {
-          alert("O campo 'Title' é obrigatório para Movie.");
+          toast.warn("O campo 'Title' é obrigatório para Movie.");
           return;
         }
         data.title = { default: [generalTitle] };
@@ -160,15 +171,15 @@ export default function MediaComponent({ search, setSearch }: MediaComponentProp
         break;
       case "chapter":
         if (!generalTitle) {
-          alert("O campo 'Title' é obrigatório para Chapter.");
+          toast.warn("O campo 'Title' é obrigatório para Chapter.");
           return;
         }
         if (chapterNumber === "" || isNaN(Number(chapterNumber))) {
-          alert("O campo 'Number' é obrigatório e deve ser numérico para Chapter.");
+          toast.warn("O campo 'Number' é obrigatório e deve ser numérico para Chapter.");
           return;
         }
         if (!chapterSourceId) {
-          alert("O campo 'Source ID' é obrigatório para Chapter.");
+          toast.warn("O campo 'Source ID' é obrigatório para Chapter.");
           return;
         }
         data.title = { default: [generalTitle] };
@@ -179,11 +190,11 @@ export default function MediaComponent({ search, setSearch }: MediaComponentProp
         break;
       case "literary_work":
         if (!generalTitle) {
-          alert("O campo 'Title' é obrigatório para Literary Work.");
+          toast.warn("O campo 'Title' é obrigatório para Literary Work.");
           return;
         }
         if (!literaryWorkType) {
-          alert("O campo 'Type' é obrigatório para Literary Work.");
+          toast.warn("O campo 'Type' é obrigatório para Literary Work.");
           return;
         }
         data.title = { default: [generalTitle] };
@@ -196,7 +207,7 @@ export default function MediaComponent({ search, setSearch }: MediaComponentProp
         if (literaryWorkTags) data.tags = literaryWorkTags.split(",").map(t => t.trim());
         break;
       default:
-        alert("Categoria não suportada.");
+        toast.error("Categoria não suportada.");
         return;
     }
     mutation.mutate(data);
@@ -218,7 +229,7 @@ export default function MediaComponent({ search, setSearch }: MediaComponentProp
   }, []);
 
   const renderCategoryInputs = () => {
-    switch (category) {
+    switch (sidebarCategory) {
       case "video":
         return (
           <FieldContainer>
@@ -411,6 +422,7 @@ export default function MediaComponent({ search, setSearch }: MediaComponentProp
 
   return (
     <>
+      <ToastContainer />
       <Container>
         <Title>Media</Title>
         <InsideContainer>
@@ -418,14 +430,20 @@ export default function MediaComponent({ search, setSearch }: MediaComponentProp
             <InputWithIcon>
               <StyledImage src="/tags.svg" alt="Tags Icon" />
               <DropdownContainer ref={dropdownRef}>
-                <DropdownHeader onClick={toggleDropdown} isOpen={isDropdownOpen}>
-                  <DropdownIcon2 src="/tags.svg" alt="Dropdown Icon" isOpen={isDropdownOpen} />
-                  <span style={{ marginLeft: '1.3rem' }}>
-                    {category ? categories.find(cat => cat.value === category)?.label : "Category"}
+                <DropdownHeader onClick={toggleDropdown} $isOpen={isDropdownOpen}>
+                  <DropdownIcon2 src="/tags.svg" alt="Dropdown Icon" $isOpen={isDropdownOpen} />
+                  <span style={{ marginLeft: '1.3rem', color: '#717171' }}>
+                    {category ? categories.find(cat => cat.value === category)?.label : "Tags"}
                   </span>
                 </DropdownHeader>
                 {isDropdownOpen && (
                   <DropdownList>
+                    <DropdownItem
+                      key="all"
+                      onClick={() => handleCategorySelect("")}
+                    >
+                      Tags
+                    </DropdownItem>
                     {categories.map(category => (
                       <DropdownItem
                         key={category.value}
@@ -453,10 +471,10 @@ export default function MediaComponent({ search, setSearch }: MediaComponentProp
           </ButtonUploadMedia>
         </InsideContainer>
       </Container>
-      {isSidebarOpen && <SidebarBackdrop isOpen={isSidebarOpen} onClick={handleCloseSidebar} />}
-      <SidebarOverlay isOpen={isSidebarOpen}>
+      {isSidebarOpen && <SidebarBackdrop $isOpen={isSidebarOpen} onClick={handleCloseSidebar} />}
+      <SidebarOverlay $isOpen={isSidebarOpen}>
         <CloseButton onClick={handleCloseSidebar}>×</CloseButton>
-        <SidebarContent isOpen={isSidebarOpen}>
+        <SidebarContent $isOpen={isSidebarOpen}>
           <SidebarTitle>
             <StyledButtonImage src="/archive.svg" alt="Archive Icon" />
             Upload Media
@@ -466,17 +484,22 @@ export default function MediaComponent({ search, setSearch }: MediaComponentProp
           </SidebarParagraph>
           <FieldContainer>
             <SidebarLabel htmlFor="mediaCategory">Category</SidebarLabel>
-            <CustomDropdown className="custom-dropdown" isOpen={isCustomDropdownOpen}>
-              <DropdownHeader2 onClick={toggleCustomDropdown} isOpen={isCustomDropdownOpen} aria-haspopup="listbox" aria-expanded={isCustomDropdownOpen}>
+            <CustomDropdown className="custom-dropdown" $isOpen={isCustomDropdownOpen}>
+              <DropdownHeader2
+                onClick={toggleCustomDropdown}
+                $isOpen={isCustomDropdownOpen}
+                aria-haspopup="listbox"
+                aria-expanded={isCustomDropdownOpen}
+              >
                 <DropdownText>
-                  {category
-                    ? categories.find(cat => cat.value === category)?.label
+                  {sidebarCategory
+                    ? categories.find(cat => cat.value === sidebarCategory)?.label
                     : "Select category"}
                 </DropdownText>
                 <DropdownIcon
                   src="/arrow-down.svg"
                   alt="Dropdown Icon"
-                  isOpen={isCustomDropdownOpen}
+                  $isOpen={isCustomDropdownOpen}
                 />
               </DropdownHeader2>
               {isCustomDropdownOpen && (
@@ -517,9 +540,6 @@ export default function MediaComponent({ search, setSearch }: MediaComponentProp
               )}
             </SidebarSubmitButton>
           </ContainerFinished>
-          {mutation.isError && (
-            <p style={{ color: 'red' }}>Erro ao enviar mídia: {mutation.error instanceof Error ? mutation.error.message : 'Erro desconhecido'}</p>
-          )}
         </SidebarContent>
       </SidebarOverlay>
     </>
