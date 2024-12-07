@@ -70,8 +70,12 @@ export interface MediaData {
     return response.json();
   }
   
-  export async function fetchMedia(): Promise<MediaResponse[]> {
-    const response = await fetch('https://enki.hyoretsu.com/media');
+  export async function fetchMedia(title?: string): Promise<MediaResponse[]> {
+    const url = new URL('https://enki.hyoretsu.com/media');
+    if (title) {
+      url.searchParams.append('title', title);
+    }
+    const response = await fetch(url.toString());
     if (!response.ok) {
       throw new Error('Erro ao buscar mídias');
     }

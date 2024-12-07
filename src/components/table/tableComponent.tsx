@@ -1,3 +1,4 @@
+// src/components/table/tableComponent.tsx
 "use client";
 import React from 'react';
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react';
@@ -29,11 +30,13 @@ import {
 } from './styles';
 import { fetchMedia, MediaResponse } from '@/app/api/media';
 import { parseAsInteger, useQueryState } from 'nuqs';
-
-export default function TableComponent() {
-  const [rowsPerPage, setRowsPerPage] = useQueryState('rowsPerPage', parseAsInteger.withDefault(10));
+interface TableComponentProps {
+    search: string;
+  }
+  
+export default function TableComponent({ search }: TableComponentProps) {
+    const [rowsPerPage, setRowsPerPage] = useQueryState('rowsPerPage', parseAsInteger.withDefault(10));
   const [currentPage, setCurrentPage] = useQueryState('currentPage', parseAsInteger.withDefault(1));
-  const [search] = useQueryState<string>('search', { defaultValue: '', parse: (value) => value });
   const [category] = useQueryState<string>('category', { defaultValue: '', parse: (value) => value });
 
   const {
@@ -43,12 +46,11 @@ export default function TableComponent() {
     error,
   } = useQuery<MediaResponse[], Error>({
     queryKey: ['medias', search, category],
-    queryFn: () => fetchMedia(),
+    queryFn: () => fetchMedia(search),
     staleTime: 5000,
   });
 
   const filteredData = mediasData?.filter(media =>
-    media.title?.default[0].toLowerCase().includes(search.toLowerCase()) &&
     (category ? media.category === category : true)
   ) || [];
 

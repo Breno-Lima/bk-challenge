@@ -38,11 +38,14 @@ import {
 } from "./styles";
 
 const literaryWorkTypes = Object.values(LiteraryWorkType);
+interface MediaComponentProps {
+  search: string;
+  setSearch: (search: string) => void;
+}
+export default function MediaComponent({ search, setSearch }: MediaComponentProps) {
 
-export default function MediaComponent() {
-  const [search, setSearch] = useQueryState<string>('search', { defaultValue: '', parse: (value) => value });
   const [category, setCategory] = useQueryState<string>('category', { defaultValue: '', parse: (value) => value });
-  
+
   const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
   const [videoLink, setVideoLink] = useState<string>("");
@@ -60,7 +63,7 @@ export default function MediaComponent() {
   const [literaryWorkTags, setLiteraryWorkTags] = useState<string>("");
   const dropdownRef = useRef<HTMLDivElement>(null);
   const [isCustomDropdownOpen, setIsCustomDropdownOpen] = useState<boolean>(false);
-  
+
   const categories = [
     { value: "chapter", label: "Chapter" },
     { value: "literary_work", label: "Literary Work" },
@@ -437,8 +440,8 @@ export default function MediaComponent() {
             </InputWithIcon>
             <InputWithIcon>
               <StyledImage src="/search.svg" alt="Search Icon" />
-              <SearchMedia 
-                placeholder="Search Upload" 
+              <SearchMedia
+                placeholder="Search Upload"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
               />
