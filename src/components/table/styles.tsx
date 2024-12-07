@@ -18,10 +18,12 @@ export const TableWrapper = styled.div`
   overflow-x: auto; 
   @media (max-width: 768px) {
     width: 100%;
-    padding: 0; 
+    padding: 0;
     box-sizing: border-box; 
+    padding: 0 1rem;
   }
 `;
+
 
 export const Divider = styled.div`
   width: 86%;
@@ -36,11 +38,11 @@ export const DividerInside = styled(Divider)`
   background-color: #27272A;
   width: 100%;
   @media (max-width: 768px) {
-    width: 100%;
-    margin-left: 0;
+    width: 100vw;
+    margin-left: calc(-50vw + 50%);
+    position: relative;
   }
 `;
-
 export const CheckBox = styled.input.attrs({ type: 'checkbox' })`
   background-color: transparent;
   border: 1px solid #71717A; 
@@ -55,7 +57,9 @@ export const CheckBox = styled.input.attrs({ type: 'checkbox' })`
   }
   @media (max-width: 768px) {
     margin-right: 8px;
-    margin-top: auto;
+    justify-content: center;
+    align-items: center;
+    justify-items: center;
     width: 20px;
     height: 20px;
   }
@@ -69,7 +73,10 @@ export const Title = styled.h2`
   text-align: center;
   @media (max-width: 768px) {
     font-size: 16px;
-    margin-left: 0.5rem;
+    justify-self: start;
+    text-align: left;
+    align-items: start;
+    justify-content: start;
   }
 `;
 
@@ -81,7 +88,10 @@ export const Id = styled.p`
   line-height: 1;
   @media (max-width: 768px) {
     font-size: 12px;
-    margin-left: 0.5rem;
+    justify-self: start;
+    text-align: left;
+    align-items: start;
+    justify-content: start;
   }
 `;
 
@@ -92,6 +102,10 @@ export const Date = styled.p`
   text-align: center;
   @media (max-width: 768px) {
     font-size: 12px;
+    justify-self: start;
+    text-align: left;
+    align-items: start;
+    justify-content: start;
   }
 `;
 
@@ -112,6 +126,10 @@ export const Category = styled.p<{ color: string }>`
   }
   @media (max-width: 768px) {
     font-size: 12px;
+    text-align: center; 
+    margin: 0; 
+    margin-top: 0.5rem; 
+    
     &::before {
       font-size: 1.2em;
     }
@@ -139,7 +157,10 @@ export const ContainerPage = styled.div`
   @media (max-width: 768px) {
     width: 100%;
     flex-direction: column;
-    align-items: flex-start;
+    align-items: center;
+    gap: 0.5rem;
+    justify-content: center;
+    justify-items: center;
   }
 `;
 
@@ -194,10 +215,10 @@ export const DropdownSelect = styled.select`
     display: flex;
     align-items: center;
     gap: 1rem;
-    @media (max-width: 480px) {
-      width: 100%;
-      justify-content: space-between;
-    }
+   @media (max-width: 768px) {
+    width: 100%;
+    height: 2.5rem;
+  }
   }
 `;
 
@@ -207,7 +228,7 @@ export const RightContainer = styled.div`
   gap: 1rem; 
   @media (max-width: 768px) {
     flex-direction: column;
-    align-items: flex-start;
+    align-items: center;
     gap: 0.5rem; 
   }
 `;
@@ -237,6 +258,11 @@ export const PaginationButton = styled.button`
     opacity: 0.5;
     cursor: not-allowed;
   }
+
+  @media (max-width: 768px) {
+    width: 2.5rem;
+    height: 2.5rem;
+  }
 `;
 
 export const StyledDate = styled(Date)`
@@ -265,6 +291,11 @@ export const SpacedCategory = styled(Category)`
 export const ContainerTest = styled.div`
   display: flex;
   justify-self: start;
+  @media (max-width: 768px) {
+    width: 100%;
+    justify-content: flex-start;
+    margin-top: 0.5rem;
+  }
 `;
 
 export const Pages = styled.span`
@@ -300,11 +331,16 @@ export const HeaderRow = styled.div`
   font-weight: bold;
   color: #D4D4D8;
   @media (max-width: 768px) {
-    width: 100%;
-    min-width: 600px; 
+    grid-template-columns: 0fr 3fr 4fr 2fr;
+    align-items: center;
+    justify-items: center;
+    justify-content: center;
+    justify-content: center;
     padding: 8px 0;
+    margin-left: 0.5rem;
   }
 `;
+
 
 export const Row = styled.div`
  display: grid;
@@ -317,8 +353,9 @@ export const Row = styled.div`
   font-weight: bold;
   color: #D4D4D8;
   @media (max-width: 768px) {
-    width: 100%;
-    min-width: 600px; 
+    grid-template-columns: 1fr 4fr 2fr 2fr;
+    align-items: center;
+    justify-items: center;
     padding: 8px 0;
   }
 `;
@@ -335,6 +372,9 @@ export const HeaderColumn = styled.div`
     width: 100%;
     display: flex;
     align-items: center;
+    justify-content: space-between;
+    margin-right: 0.5rem;
+    margin-left: 1rem;
   }
 `;
 
