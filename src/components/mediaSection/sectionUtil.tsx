@@ -1,10 +1,13 @@
-"use client"
-import { useState, useRef, useEffect } from "react";
+"use client";
+import React, { useState, useRef, useEffect } from "react";
 import styled from 'styled-components';
+import { useMutation } from '@tanstack/react-query';
+import { createMedia, LiteraryWorkType, type MediaData, type MediaResponse } from "@/app/api/media";
 
 interface SidebarOverlayProps {
   isOpen: boolean;
 }
+
 const UploadIcon = styled.img`
   width: 1rem;
   height: 1rem;
@@ -48,7 +51,6 @@ const ContainerFinished = styled.div`
   gap: 1rem;
 `;
 
-
 const SidebarOverlay = styled.div<SidebarOverlayProps>`
   position: fixed;
   top: 0;
@@ -59,7 +61,8 @@ const SidebarOverlay = styled.div<SidebarOverlayProps>`
   transition: width 0.3s ease-in-out;
   box-shadow: -4px 0 15px rgba(0,0,0,0.2);
   z-index: 1100;
-  overflow: hidden;
+  overflow-y: auto;
+  overflow-x: hidden ;
 
   @media (max-width: 480px) {
     width: ${props => props.isOpen ? '100%' : '0'};
@@ -107,21 +110,25 @@ const SidebarInput = styled.input`
   }
 `;
 
-const SidebarSubmitButton = styled.button`
+const SidebarSubmitButton = styled.button<{ disabled?: boolean }>`
   padding: 0.5rem 1rem;
   background-color: #2DD4BF;
   color: #022C22;
   border: none;
-  width: 8.375rem;
+  width: 8.75rem;
   height: 2rem;
   border-radius: 6px;
   cursor: pointer;
   display: flex; 
   align-items: center; 
   justify-content: center;
-  width: 8.75rem;
   &:hover {
     background-color: #177b5a;
+  }
+
+  &:disabled {
+    background-color: #6B7280;
+    cursor: not-allowed;
   }
 `;
 
@@ -215,9 +222,6 @@ const CustomDropdown = styled.div<{ isOpen: boolean }>`
   border-radius: 8px;
 `;
 
-
-
-
 const DropdownHeader = styled.div<{ isOpen: boolean }>`
   padding: 0.5rem 0.8rem;
   border: 1px dashed #3F3F46;
@@ -240,7 +244,7 @@ const DropdownHeader = styled.div<{ isOpen: boolean }>`
 
 const DropdownHeader2 = styled.div<{ isOpen: boolean }>`
   padding: 0rem 0.8rem;
-  border: '1px solid #3F3F46';
+  border: 1px solid #3F3F46;
   border-radius: 8px;
   height: 2.56rem;
   background-color: #18181b66;
@@ -258,7 +262,6 @@ const DropdownHeader2 = styled.div<{ isOpen: boolean }>`
     border-color: #10B981;
   }
 `;
-
 
 const DropdownText = styled.span``;
 
@@ -398,35 +401,56 @@ const SidebarBackdrop = styled.div<SidebarOverlayProps>`
   z-index: 1099;
 `;
 
+
+const literaryWorkTypes = Object.values(LiteraryWorkType);
+
+
 export default function MediaComponent() {
-  const [selectedCategory, setSelectedCategory] = useState("");
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [mediaFile, setMediaFile] = useState<File | null>(null);
-  const [mediaTitle, setMediaTitle] = useState("");
-  const [mediaDescription, setMediaDescription] = useState("");
-  const [sidebarSelectedCategory, setSidebarSelectedCategory] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState<string>("");
+  const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
+
+  const [sidebarSelectedCategory, setSidebarSelectedCategory] = useState<string>("");
+
+  const [videoLink, setVideoLink] = useState<string>("");
+  
+  const [generalTitle, setGeneralTitle] = useState<string>("");
+  
+  const [movieDuration, setMovieDuration] = useState<string>("");
+  const [movieReleaseDate, setMovieReleaseDate] = useState<string>("");
+  
+  const [chapterNumber, setChapterNumber] = useState<number | "">("");
+  const [chapterPages, setChapterPages] = useState<number | "">("");
+  const [chapterReleaseDate, setChapterReleaseDate] = useState<string>("");
+  const [chapterSourceId, setChapterSourceId] = useState<string>("");
+  
+  const [literaryWorkCurrentChapters, setLiteraryWorkCurrentChapters] = useState<number | "">("");
+  const [literaryWorkOngoing, setLiteraryWorkOngoing] = useState<boolean>(true);
+  const [literaryWorkSynopsis, setLiteraryWorkSynopsis] = useState<string>("");
+  const [literaryWorkType, setLiteraryWorkType] = useState<string>("");
+  const [literaryWorkTags, setLiteraryWorkTags] = useState<string>("");
 
   const dropdownRef = useRef<HTMLDivElement>(null);
-
-  const [isCustomDropdownOpen, setIsCustomDropdownOpen] = useState(false);
+  const [isCustomDropdownOpen, setIsCustomDropdownOpen] = useState<boolean>(false);
 
   const categories = [
-    { value: "natureza", label: "Natureza" },
-    { value: "tecnologia", label: "Tecnologia" },
-    { value: "pessoas", label: "Pessoas" },
-    { value: "arte", label: "Arte" },
-    { value: "esportes", label: "Esportes" },
+    { value: "chapter", label: "Chapter" },
+    { value: "literary_work", label: "Literary Work" },
+    { value: "movie", label: "Movie" },
+    { value: "video", label: "Video" },
+    { value: "video_game", label: "Video Game" },
   ];
 
   const handleCategorySelect = (value: string) => {
     setSelectedCategory(value);
-    setIsCustomDropdownOpen(false);
+    setIsDropdownOpen(false);
   };
 
   const handleSidebarCategorySelect = (value: string) => {
     setSidebarSelectedCategory(value);
     setIsCustomDropdownOpen(false);
+    // Limpa campos ao mudar a categoria
+    resetFields();
   };
 
   const toggleCustomDropdown = () => {
@@ -445,18 +469,130 @@ export default function MediaComponent() {
     setIsSidebarOpen(false);
   };
 
-  const handleSubmitMedia = () => {
-    console.log('Submitting media:', {
-      title: mediaTitle,
-      description: mediaDescription,
-      category: selectedCategory,
-      file: mediaFile
-    });
+  const resetFields = () => {
+    setGeneralTitle("");
+    setVideoLink("");
+    setMovieDuration("");
+    setMovieReleaseDate("");
+    setChapterNumber("");
+    setChapterPages("");
+    setChapterReleaseDate("");
+    setChapterSourceId("");
+    setLiteraryWorkCurrentChapters("");
+    setLiteraryWorkOngoing(true);
+    setLiteraryWorkSynopsis("");
+    setLiteraryWorkType("");
+    setLiteraryWorkTags("");
+  };
 
-    setMediaTitle("");
-    setMediaDescription("");
-    setMediaFile(null);
-    setIsSidebarOpen(false);
+  const mutation = useMutation<MediaResponse, Error, MediaData>({
+    mutationFn: createMedia,
+    onSuccess: () => {
+      alert("Mídia criada com sucesso!");
+
+      resetFields();
+      setSidebarSelectedCategory("");
+      setIsSidebarOpen(false);
+    },
+    onError: (error: Error) => {
+      console.error(error);
+      alert("Erro ao criar mídia. Verifique o console.");
+    },
+  });
+
+  const handleSubmitMedia = () => {
+
+    const category = sidebarSelectedCategory;
+    if (!category) {
+      alert("Por favor, selecione uma categoria.");
+      return;
+    }
+
+    const data: MediaData = { category };
+
+
+    switch (category) {
+      case "video":
+
+        if (!videoLink) {
+          alert("O campo 'Link' é obrigatório para vídeo.");
+          return;
+        }
+        data.link = videoLink;
+        break;
+
+      case "video_game":
+
+        if (!generalTitle) {
+          alert("O campo 'Title' é obrigatório para Video Game.");
+          return;
+        }
+        data.title = { default: [generalTitle] };
+        break;
+
+      case "movie":
+
+        if (!generalTitle) {
+          alert("O campo 'Title' é obrigatório para Movie.");
+          return;
+        }
+        data.title = { default: [generalTitle] };
+
+        if (movieDuration) data.duration = movieDuration;
+        if (movieReleaseDate) data.releaseDate = new Date(movieReleaseDate).toISOString();
+        break;
+
+      case "chapter":
+
+        if (!generalTitle) {
+          alert("O campo 'Title' é obrigatório para Chapter.");
+          return;
+        }
+        if (chapterNumber === "" || isNaN(Number(chapterNumber))) {
+          alert("O campo 'Number' é obrigatório e deve ser numérico para Chapter.");
+          return;
+        }
+        if (!chapterSourceId) {
+          alert("O campo 'Source ID' é obrigatório para Chapter.");
+          return;
+        }
+
+        data.title = { default: [generalTitle] };
+        data.number = Number(chapterNumber);
+        data.sourceId = chapterSourceId;
+
+        if (chapterPages !== "" && !isNaN(Number(chapterPages))) data.pages = Number(chapterPages);
+        if (chapterReleaseDate) data.releaseDate = new Date(chapterReleaseDate).toISOString();
+        break;
+
+      case "literary_work":
+
+        if (!generalTitle) {
+          alert("O campo 'Title' é obrigatório para Literary Work.");
+          return;
+        }
+        if (!literaryWorkType) {
+          alert("O campo 'Type' é obrigatório para Literary Work.");
+          return;
+        }
+
+        data.title = { default: [generalTitle] };
+        data.type = literaryWorkType;
+
+        if (literaryWorkCurrentChapters !== "" && !isNaN(Number(literaryWorkCurrentChapters))) {
+          data.currentChapters = Number(literaryWorkCurrentChapters);
+        }
+        data.ongoing = literaryWorkOngoing;
+        if (literaryWorkSynopsis) data.synopsis = { "en": [literaryWorkSynopsis] };
+        if (literaryWorkTags) data.tags = literaryWorkTags.split(",").map(t => t.trim());
+        break;
+
+      default:
+        alert("Categoria não suportada.");
+        return;
+    }
+
+    mutation.mutate(data);
   };
 
   useEffect(() => {
@@ -475,6 +611,213 @@ export default function MediaComponent() {
     };
   }, []);
 
+  const renderCategoryInputs = () => {
+    switch (sidebarSelectedCategory) {
+      case "video":
+        return (
+          <>
+            <FieldContainer>
+              <SidebarLabel htmlFor="videoLink">Link (required)</SidebarLabel>
+              <SidebarInput
+                id="videoLink"
+                type="text"
+                placeholder="Insira o link do vídeo..."
+                value={videoLink}
+                onChange={(e) => setVideoLink(e.target.value)}
+              />
+            </FieldContainer>
+          </>
+        );
+
+      case "video_game":
+        return (
+          <>
+            <FieldContainer>
+              <SidebarLabel htmlFor="generalTitle">Title (required)</SidebarLabel>
+              <SidebarInput
+                id="generalTitle"
+                type="text"
+                placeholder="Insira o título..."
+                value={generalTitle}
+                onChange={(e) => setGeneralTitle(e.target.value)}
+              />
+            </FieldContainer>
+          </>
+        );
+
+      case "movie":
+        return (
+          <>
+            <FieldContainer>
+              <SidebarLabel htmlFor="generalTitle">Title (required)</SidebarLabel>
+              <SidebarInput
+                id="generalTitle"
+                type="text"
+                placeholder="Insira o título..."
+                value={generalTitle}
+                onChange={(e) => setGeneralTitle(e.target.value)}
+              />
+            </FieldContainer>
+
+            <FieldContainer>
+              <SidebarLabel htmlFor="movieDuration">Duration (optional)</SidebarLabel>
+              <SidebarInput
+                id="movieDuration"
+                type="text"
+                placeholder="Ex: PT5H10M30S"
+                value={movieDuration}
+                onChange={(e) => setMovieDuration(e.target.value)}
+              />
+            </FieldContainer>
+
+            <FieldContainer>
+              <SidebarLabel htmlFor="movieReleaseDate">Release Date (optional)</SidebarLabel>
+              <SidebarInput
+                id="movieReleaseDate"
+                type="datetime-local"
+                value={movieReleaseDate}
+                onChange={(e) => setMovieReleaseDate(e.target.value)}
+              />
+            </FieldContainer>
+          </>
+        );
+
+      case "chapter":
+        return (
+          <>
+            <FieldContainer>
+              <SidebarLabel htmlFor="generalTitle">Title (required)</SidebarLabel>
+              <SidebarInput
+                id="generalTitle"
+                type="text"
+                placeholder="Insira o título..."
+                value={generalTitle}
+                onChange={(e) => setGeneralTitle(e.target.value)}
+              />
+            </FieldContainer>
+            <FieldContainer>
+              <SidebarLabel htmlFor="chapterNumber">Number (required)</SidebarLabel>
+              <SidebarInput
+                id="chapterNumber"
+                type="number"
+                placeholder="Número do capítulo"
+                value={chapterNumber}
+                onChange={(e) => setChapterNumber(e.target.value as any)}
+              />
+            </FieldContainer>
+            <FieldContainer>
+              <SidebarLabel htmlFor="chapterSourceId">Source ID (required)</SidebarLabel>
+              <SidebarInput
+                id="chapterSourceId"
+                type="text"
+                placeholder="ID da fonte"
+                value={chapterSourceId}
+                onChange={(e) => setChapterSourceId(e.target.value)}
+              />
+            </FieldContainer>
+            <FieldContainer>
+              <SidebarLabel htmlFor="chapterPages">Pages (optional)</SidebarLabel>
+              <SidebarInput
+                id="chapterPages"
+                type="number"
+                placeholder="Quantidade de páginas"
+                value={chapterPages}
+                onChange={(e) => setChapterPages(e.target.value as any)}
+              />
+            </FieldContainer>
+            <FieldContainer>
+              <SidebarLabel htmlFor="chapterReleaseDate">Release Date (optional)</SidebarLabel>
+              <SidebarInput
+                id="chapterReleaseDate"
+                type="datetime-local"
+                value={chapterReleaseDate}
+                onChange={(e) => setChapterReleaseDate(e.target.value)}
+              />
+            </FieldContainer>
+          </>
+        );
+
+      case "literary_work":
+        return (
+          <>
+            <FieldContainer>
+              <SidebarLabel htmlFor="generalTitle">Title (required)</SidebarLabel>
+              <SidebarInput
+                id="generalTitle"
+                type="text"
+                placeholder="Insira o título..."
+                value={generalTitle}
+                onChange={(e) => setGeneralTitle(e.target.value)}
+              />
+            </FieldContainer>
+
+            <FieldContainer>
+              <SidebarLabel htmlFor="literaryWorkType">Type (required)</SidebarLabel>
+              <SidebarInput
+                as="select"
+                id="literaryWorkType"
+                value={literaryWorkType}
+                onChange={(e) => setLiteraryWorkType(e.target.value)}
+              >
+                <option value="">Selecione um tipo</option>
+                {literaryWorkTypes.map(type => (
+                  <option key={type} value={type}>{type}</option>
+                ))}
+              </SidebarInput>
+            </FieldContainer>
+
+            <FieldContainer>
+              <SidebarLabel htmlFor="literaryWorkCurrentChapters">Current Chapters (optional)</SidebarLabel>
+              <SidebarInput
+                id="literaryWorkCurrentChapters"
+                type="number"
+                placeholder="Capítulos atuais"
+                value={literaryWorkCurrentChapters}
+                onChange={(e) => setLiteraryWorkCurrentChapters(e.target.value as any)}
+              />
+            </FieldContainer>
+
+            <FieldContainer>
+              <SidebarLabel htmlFor="literaryWorkOngoing">Ongoing (optional)</SidebarLabel>
+              <SidebarInput
+                as="select"
+                id="literaryWorkOngoing"
+                value={literaryWorkOngoing ? "true" : "false"}
+                onChange={(e) => setLiteraryWorkOngoing(e.target.value === "true")}
+              >
+                <option value="true">Yes</option>
+                <option value="false">No</option>
+              </SidebarInput>
+            </FieldContainer>
+
+            <FieldContainer>
+              <SidebarLabel htmlFor="literaryWorkSynopsis">Synopsis (optional)</SidebarLabel>
+              <SidebarInput
+                id="literaryWorkSynopsis"
+                type="text"
+                placeholder="Sinopse"
+                value={literaryWorkSynopsis}
+                onChange={(e) => setLiteraryWorkSynopsis(e.target.value)}
+              />
+            </FieldContainer>
+
+            <FieldContainer>
+              <SidebarLabel htmlFor="literaryWorkTags">Tags (optional, separated by commas)</SidebarLabel>
+              <SidebarInput
+                id="literaryWorkTags"
+                type="text"
+                placeholder="ex: tag1, tag2"
+                value={literaryWorkTags}
+                onChange={(e) => setLiteraryWorkTags(e.target.value)}
+              />
+            </FieldContainer>
+          </>
+        );
+
+      default:
+        return null;
+    }
+  };
 
   return (
     <>
@@ -521,7 +864,6 @@ export default function MediaComponent() {
       <SidebarOverlay isOpen={isSidebarOpen}>
         <CloseButton onClick={handleCloseSidebar}>×</CloseButton>
         <SidebarContent isOpen={isSidebarOpen}>
-
           <SidebarTitle>
             <StyledButtonImage src="/archive.svg" alt="Archive Icon" />
             Upload Media
@@ -566,47 +908,31 @@ export default function MediaComponent() {
                 </DropdownList>
               )}
             </CustomDropdown>
-
           </FieldContainer>
 
-          <FieldContainer>
-            <SidebarLabel htmlFor="mediaTitle">Title</SidebarLabel>
-            <SidebarInput
-              id="mediaTitle"
-              type="text"
-              placeholder="Digite o título do media..."
-              value={mediaTitle}
-              onChange={(e) => setMediaTitle(e.target.value)}
-            />
-          </FieldContainer>
-
-          <FieldContainer>
-            <SidebarLabel htmlFor="mediaDescription">Data</SidebarLabel>
-            <SidebarInput
-              id="mediaDescription"
-              type="text"
-              placeholder="Digite a descrição..."
-              value={mediaDescription}
-              onChange={(e) => setMediaDescription(e.target.value)}
-            />
-          </FieldContainer>
+          {renderCategoryInputs()}
 
           <ContainerFinished>
             <ClearAll onClick={() => {
-              setMediaTitle("");
-              setMediaDescription("");
+              resetFields();
               setSidebarSelectedCategory("");
-              setMediaFile(null);
             }}>
               Clear all
             </ClearAll>
 
-
-            <SidebarSubmitButton onClick={handleSubmitMedia}>
-              <UploadIcon src="/check.svg" alt="Upload Icon" />
-              Upload Media
+            <SidebarSubmitButton onClick={handleSubmitMedia} disabled={mutation.status === 'pending'}>
+              {mutation.status === 'pending' ? 'Uploading...' : (
+                <>
+                  <UploadIcon src="/check.svg" alt="Upload Icon" />
+                  Upload Media
+                </>
+              )}
             </SidebarSubmitButton>
           </ContainerFinished>
+
+          {mutation.isError && (
+            <p style={{ color: 'red' }}>Erro ao enviar mídia: {mutation.error instanceof Error ? mutation.error.message : 'Erro desconhecido'}</p>
+          )}
         </SidebarContent>
       </SidebarOverlay>
     </>
