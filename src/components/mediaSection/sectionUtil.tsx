@@ -71,7 +71,6 @@ export default function MediaComponent({ search, setSearch }: MediaComponentProp
   const [isCustomDropdownOpen, setIsCustomDropdownOpen] = useState<boolean>(false);
 
   const categories = [
-    // { value: "chapter", label: "Chapter" }, //Não tem como filtrar um capítulo pq precisa passar os query params (title e mediaId)
     { value: "literary_work", label: "Literary Work" },
     { value: "movie", label: "Movie" },
     { value: "video", label: "Video" },

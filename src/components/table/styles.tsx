@@ -241,7 +241,7 @@ export const PaginationButton = styled.button`
 
 export const StyledDate = styled(Date)`
   grid-column: 3;
-  justify-self: end;
+  justify-self: start;
   margin-right: 2rem;
   @media (max-width: 768px) {
     grid-column: 3;
@@ -250,19 +250,21 @@ export const StyledDate = styled(Date)`
 
 export const SpacedCategory = styled(Category)`
   grid-column: 4;
-  justify-self: end;
+  justify-self: start;
+  text-align: left; 
   font-weight: bold;
+
   @media (max-width: 768px) {
     margin: 0;
     font-weight: normal;
     grid-column: 4;
+    text-align: left;
   }
 `;
 
 export const ContainerTest = styled.div`
   display: flex;
-  gap: 2rem;
-  justify-self: end;
+  justify-self: start;
 `;
 
 export const Pages = styled.span`
@@ -291,7 +293,9 @@ export const HeaderRow = styled.div`
   display: grid;
   grid-template-columns: 2rem 4fr 1fr 1fr;
   align-items: center;
-  width: 89%;
+  width: auto;
+  justify-items: start;
+  justify-content: start;
   padding: 10px 0;
   font-weight: bold;
   color: #D4D4D8;
@@ -303,16 +307,19 @@ export const HeaderRow = styled.div`
 `;
 
 export const Row = styled.div`
-  display: grid;
+ display: grid;
   grid-template-columns: 2rem 4fr 1fr 1fr;
   align-items: center;
-  place-content: end;
-  width: 90%;  
-  padding: 0.75rem 0;
+  width: auto;
+  justify-items: start;
+  justify-content: start;
+  padding: 10px 0;
+  font-weight: bold;
+  color: #D4D4D8;
   @media (max-width: 768px) {
     width: 100%;
-    padding: 8px 0;
     min-width: 600px; 
+    padding: 8px 0;
   }
 `;
 

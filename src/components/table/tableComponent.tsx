@@ -1,4 +1,3 @@
-// src/components/table/tableComponent.tsx
 "use client";
 import React from 'react';
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react';
@@ -30,12 +29,14 @@ import {
 } from './styles';
 import { fetchMedia, MediaResponse } from '@/app/api/media';
 import { parseAsInteger, useQueryState } from 'nuqs';
+import { formatDistanceToNow } from 'date-fns'; 
+
 interface TableComponentProps {
-    search: string;
-  }
-  
+  search: string;
+}
+
 export default function TableComponent({ search }: TableComponentProps) {
-    const [rowsPerPage, setRowsPerPage] = useQueryState('rowsPerPage', parseAsInteger.withDefault(10));
+  const [rowsPerPage, setRowsPerPage] = useQueryState('rowsPerPage', parseAsInteger.withDefault(10));
   const [currentPage, setCurrentPage] = useQueryState('currentPage', parseAsInteger.withDefault(1));
   const [category] = useQueryState<string>('category', { defaultValue: '', parse: (value) => value });
 
@@ -70,15 +71,15 @@ export default function TableComponent({ search }: TableComponentProps) {
   const getCategoryColor = (category: string) => {
     switch (category) {
       case 'video_game':
-        return '#0EA5E9'; 
+        return '#0EA5E9';
       case 'literary_work':
-        return '#A855F7'; 
+        return '#A855F7';
       case 'movie':
-        return '#EC4899'; 
+        return '#EC4899';
       case 'video':
-        return '#F97316'; 
+        return '#F97316';
       default:
-        return '#FFFFFF'; 
+        return '#FFFFFF';
     }
   };
 
@@ -86,6 +87,11 @@ export default function TableComponent({ search }: TableComponentProps) {
     (currentPage - 1) * rowsPerPage,
     currentPage * rowsPerPage
   );
+
+  const formatReleaseDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return formatDistanceToNow(date, { addSuffix: true });
+  };
 
   return (
     <Container>
@@ -103,9 +109,9 @@ export default function TableComponent({ search }: TableComponentProps) {
             <CheckBox disabled />
             <Column>
               <Title>Loading...</Title>
-              <Id>N/A</Id>
+              <Id></Id>
             </Column>
-            <StyledDate>N/A</StyledDate>
+            <StyledDate></StyledDate>
             <ContainerTest>
               <SpacedCategory color='#0447ff'>Loading</SpacedCategory>
             </ContainerTest>
@@ -117,7 +123,7 @@ export default function TableComponent({ search }: TableComponentProps) {
               <Title>Error Loading Media</Title>
               <Id>{error?.message}</Id>
             </Column>
-            <StyledDate>N/A</StyledDate>
+            <StyledDate></StyledDate>
             <ContainerTest>
               <SpacedCategory color='#ff0000'>Error</SpacedCategory>
             </ContainerTest>
@@ -133,8 +139,8 @@ export default function TableComponent({ search }: TableComponentProps) {
                 </Column>
                 <StyledDate>
                   {media.releaseDate
-                    ? new Date(media.releaseDate).toLocaleDateString()
-                    : 'N/A'}
+                    ? formatReleaseDate(media.releaseDate) 
+                    : ''}
                 </StyledDate>
                 <ContainerTest>
                   <SpacedCategory color={getCategoryColor(media.category)}>{media.category}</SpacedCategory>
@@ -148,11 +154,11 @@ export default function TableComponent({ search }: TableComponentProps) {
             <CheckBox disabled />
             <Column>
               <Title>No media found.</Title>
-              <Id>N/A</Id>
+              <Id></Id>
             </Column>
-            <StyledDate>N/A</StyledDate>
+            <StyledDate></StyledDate>
             <ContainerTest>
-              <SpacedCategory color='#0447ff'>N/A</SpacedCategory>
+              <SpacedCategory color='#0447ff'></SpacedCategory>
             </ContainerTest>
           </Row>
         )}
