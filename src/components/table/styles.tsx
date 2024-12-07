@@ -279,6 +279,7 @@ export const Container = styled.div`
   text-align: center;
   width: 100%;
   margin-top: 3.8rem;
+  margin-bottom: 5rem;
   @media (max-width: 768px) {
     margin-top: 2rem;
     width: 100%;

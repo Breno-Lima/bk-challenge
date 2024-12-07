@@ -1,37 +1,23 @@
-"use client"
+"use client";
 import styled from 'styled-components';
 
 interface SidebarOverlayProps {
   isOpen: boolean;
 }
 
-
-
 interface SidebarContentProps {
   isOpen: boolean;
 }
-
-
 
 interface DropdownIconProps {
   isOpen: boolean;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+export const UploadIcon = styled.img`
+  width: 1rem;
+  height: 1rem;
+  margin-right: 0.5rem;
+`;
 
 export const ClearAll = styled.p`
   color: #71717A;
@@ -41,7 +27,6 @@ export const ClearAll = styled.p`
   height: 2rem;
   border-radius: 8px;
   cursor: pointer;
-
   display: flex;
   align-items: center;
   justify-content: center;
@@ -87,6 +72,7 @@ export const SidebarOverlay = styled.div<SidebarOverlayProps>`
     width: ${props => props.isOpen ? '100%' : '0'};
   }
 `;
+
 export const SidebarContent = styled.div<SidebarContentProps>`
   padding: 2rem;
   color: #FAFAFA;
@@ -136,6 +122,7 @@ export const SidebarSubmitButton = styled.button<{ disabled?: boolean }>`
   display: flex; 
   align-items: center; 
   justify-content: center;
+
   &:hover {
     background-color: #177b5a;
   }
@@ -222,7 +209,7 @@ export const StyledButtonImage = styled.img`
 
 export const DropdownContainer = styled.div`
   position: relative;
-  width: 6.75rem;
+  width: 10rem;
   
   @media (max-width: 480px) {
     width: calc(100% - 2rem); 
@@ -278,6 +265,7 @@ export const DropdownHeader2 = styled.div<{ isOpen: boolean }>`
 `;
 
 export const DropdownText = styled.span``;
+
 export const DropdownIcon = styled.img<DropdownIconProps>`
   width: 1rem;
   height: 1rem;

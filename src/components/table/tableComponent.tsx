@@ -43,12 +43,13 @@ export default function TableComponent() {
     error,
   } = useQuery<MediaResponse[], Error>({
     queryKey: ['medias', search, category],
-    queryFn: () => fetchMedia(search, category),
+    queryFn: () => fetchMedia(),
     staleTime: 5000,
   });
 
   const filteredData = mediasData?.filter(media =>
-    media.title?.default[0].toLowerCase().includes(search.toLowerCase())
+    media.title?.default[0].toLowerCase().includes(search.toLowerCase()) &&
+    (category ? media.category === category : true)
   ) || [];
 
   const totalItems = filteredData.length;
@@ -63,6 +64,21 @@ export default function TableComponent() {
   const handlePreviousPage = () => setCurrentPage(prev => Math.max(1, prev - 1));
   const handleNextPage = () => setCurrentPage(prev => Math.min(totalPages, prev + 1));
   const handleLastPage = () => setCurrentPage(totalPages);
+
+  const getCategoryColor = (category: string) => {
+    switch (category) {
+      case 'video_game':
+        return '#0EA5E9'; 
+      case 'literary_work':
+        return '#A855F7'; 
+      case 'movie':
+        return '#EC4899'; 
+      case 'video':
+        return '#F97316'; 
+      default:
+        return '#FFFFFF'; 
+    }
+  };
 
   const paginatedData = filteredData.slice(
     (currentPage - 1) * rowsPerPage,
@@ -119,7 +135,7 @@ export default function TableComponent() {
                     : 'N/A'}
                 </StyledDate>
                 <ContainerTest>
-                  <SpacedCategory color='#0447ff'>{media.category}</SpacedCategory>
+                  <SpacedCategory color={getCategoryColor(media.category)}>{media.category}</SpacedCategory>
                 </ContainerTest>
               </Row>
               <DividerInside />

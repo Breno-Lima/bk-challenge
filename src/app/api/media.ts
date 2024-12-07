@@ -1,3 +1,4 @@
+// src/api/media.ts
 export interface MediaData {
     category: string;
     link?: string;
@@ -69,23 +70,8 @@ export interface MediaData {
     return response.json();
   }
   
-  export async function fetchMedia(search?: string, category?: string): Promise<MediaResponse[]> {
-    let url = 'https://enki.hyoretsu.com/media';
-    const params = new URLSearchParams();
-  
-    if (search) {
-      params.append('search', search);
-    }
-  
-    if (category) {
-      params.append('category', category);
-    }
-  
-    if ([...params].length > 0) {
-      url += `?${params.toString()}`;
-    }
-  
-    const response = await fetch(url);
+  export async function fetchMedia(): Promise<MediaResponse[]> {
+    const response = await fetch('https://enki.hyoretsu.com/media');
     if (!response.ok) {
       throw new Error('Erro ao buscar mídias');
     }
