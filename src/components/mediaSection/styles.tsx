@@ -147,7 +147,6 @@ export const CloseButton = styled.button`
 export const Container = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 1rem;
   padding: 0rem 6.5rem;
 
   @media (max-width: 768px) {
