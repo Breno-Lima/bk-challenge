@@ -13,20 +13,19 @@ export const ContainerDateCategory = styled.div`
 `;
 
 export const TableWrapper = styled.div`
-  width: 86%;
+  width: 100%;
   margin: 0 auto; 
   overflow-x: auto; 
   @media (max-width: 768px) {
     width: 100%;
     padding: 0;
     box-sizing: border-box; 
-    padding: 0 1rem;
   }
 `;
 
 
 export const Divider = styled.div`
-  width: 86%;
+  width: 100%;
   height: 2px;
   background-color: #27272A;
   @media (max-width: 768px) {
@@ -70,7 +69,7 @@ export const Title = styled.h2`
   font-weight: bold;
   margin: 0px 0;
   color: #D4D4D8;
-  text-align: center;
+  text-align: left;
   @media (max-width: 768px) {
     font-size: 16px;
     justify-self: start;
@@ -141,6 +140,8 @@ export const Column = styled.div`
   flex-direction: column;
   align-items: flex-start;
   grid-column: 2;
+  align-items: start;
+  text-align: center; 
   @media (max-width: 768px) {
     align-items: flex-start;
     width: 100%;
@@ -151,7 +152,7 @@ export const ContainerPage = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  width: 86%;
+  width: 100%;
   margin-top: 1rem;
   color: #D4D4D8;
   @media (max-width: 768px) {
@@ -310,14 +311,20 @@ export const Container = styled.div`
   align-items: center; 
   justify-content: center; 
   text-align: center;
-  width: 100%;
-  margin-top: 3.8rem;
+  margin-inline: 6.4rem;
+  margin-top: 1.25rem;
   margin-bottom: 5rem;
   @media (max-width: 768px) {
-    margin-top: 2rem;
-    width: 100%;
-    overflow-x: auto;
-  }
+    justify-content: center;
+    align-items: center;
+    justify-items: center;
+    overflow-x: hidden;
+    margin-inline: 0rem;
+    margin-top: 0rem;
+    margin-bottom: 0rem;
+    overflow-x: hidden;
+    padding-bottom: 3rem;
+}
 `;
 
 export const HeaderRow = styled.div`
@@ -355,6 +362,7 @@ export const Row = styled.div`
   @media (max-width: 768px) {
     grid-template-columns: 1fr 4fr 2fr 2fr;
     align-items: center;
+    text-align: center; 
     justify-items: center;
     padding: 8px 0;
   }

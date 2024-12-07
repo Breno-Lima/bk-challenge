@@ -151,11 +151,18 @@ export const Container = styled.div`
   padding: 0rem 6.5rem;
 
   @media (max-width: 768px) {
-    padding: 0rem 2rem;
+    display: block;
+    align-items: center;
+    justify-items: center;
+    justify-content: center;
   }
 
   @media (max-width: 480px) {
-    padding: 0rem 1rem;
+    padding: 1.5rem 3rem;
+    display: flex;
+  flex-direction: column;
+  align-items: center; 
+  justify-content: center; 
   }
 `;
 
@@ -212,7 +219,7 @@ export const DropdownContainer = styled.div`
   width: auto;
   
   @media (max-width: 480px) {
-    width: calc(100% - 2rem); 
+    width: 100%; 
   }
 `;
 
@@ -364,8 +371,12 @@ export const InsideContainer = styled.div`
   justify-content: space-between;
 
   @media (max-width: 480px) {
+    display: block;
     flex-direction: column;
     gap: 0.5rem;
+    width: 100%;
+    justify-content: center;
+    justify-items: center;
   }
 `;
 
@@ -376,6 +387,9 @@ export const InsideInContainer = styled.div`
   @media (max-width: 480px) {
     flex-direction: column;
     gap: 0.5rem;
+    width: 100%;
+    justify-content: center;
+    justify-items: center;
   }
 `;
 
@@ -384,6 +398,8 @@ export const FieldContainer = styled.div`
   flex-direction: column;
   gap: 0.2rem;
   width: 100%;
+  justify-content: center;
+  justify-items: center;
 `;
 
 export const SidebarBackdrop = styled.div<SidebarOverlayProps>`

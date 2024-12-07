@@ -30,6 +30,7 @@ import {
 import { fetchMedia, MediaResponse } from '@/app/api/media';
 import { parseAsInteger, useQueryState } from 'nuqs';
 import { formatDistanceToNow } from 'date-fns'; 
+import Header from '../header/header';
 
 interface TableComponentProps {
   search: string;
